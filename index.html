@@ -1320,7 +1320,7 @@
                                         <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 10px; margin-top: 10px;">
                                             <div style="color: #ff9900; font-weight: bold; margin-bottom: 5px;">LINK DO SERVIDOR:</div>
                                             <div style="color: #ffffff; word-break: break-all;" id="serverLinkText">
-                                                Carregando...
+                                                https://www.roblox.com/games/...
                                             </div>
                                         </div>
                                     </div>
@@ -1341,7 +1341,7 @@
                                     <div style="background: rgba(0, 204, 102, 0.1); padding: 15px; border-radius: 10px; margin-top: 10px; border: 1px solid #00cc66;">
                                         <div style="color: #00cc66; font-weight: bold; margin-bottom: 5px;">LINK DO WHATSAPP:</div>
                                         <div style="color: #ffffff; word-break: break-all;">
-                                            https://chat.whatsapp.com/IGETya2bgepDxqirxXwFPQ
+                                            https://chat.whatsapp.com/SeuLinkDoGrupo
                                         </div>
                                     </div>
                                 </div>
@@ -1366,11 +1366,11 @@
 
     <script>
         // ==================== CONFIGURAÇÃO ====================
-        // ⚠️ SUAS CONFIGURAÇÕES JÁ APLICADAS! ⚠️
         const CONFIG = {
-            ADMIN_CODE: "DeltaAdmin2024!", // Senha do administrador
-            WHATSAPP_GROUP_LINK: "https://chat.whatsapp.com/IGETya2bgepDxqirxXwFPQ", // SEU LINK DO WHATSAPP
-            ROBOX_SERVER_LINK: "https://www.roblox.com/pt/login?returnUrl=https%3A%2F%2Fwww.roblox.com%2Fpt%2Fshare-links%3Fcode%3Dd05a3163e2a0794480d4f23e122c1504%26type%3DServer%26pid%3DServer%26is_retargeting%3Dfalse%26deep_link_value%3Droblox%253A%252F%252Fnavigation%252Fshare_links%253Fcode%253Dd05a3163e2a0794480d4f23e122c1504%2526type%253DServer", // SEU LINK DO ROBLOX
+            ADMIN_CODE: "DeltaAdmin2024!", // ⚠️ MUDE ESTA SENHA!
+            LOCAL_STORAGE_KEY: "delta_airlines_rp",
+            WHATSAPP_GROUP_LINK: "https://chat.whatsapp.com/SeuLinkDoGrupo", // ⚠️ COLE SEU LINK AQUI!
+            ROBOX_SERVER_LINK: "https://www.roblox.com/games/SeuJogoID", // ⚠️ COLE SEU LINK AQUI!
             VERSION: "1.0",
             
             // Pontuações e níveis
@@ -1394,60 +1394,13 @@
         // ==================== VARIÁVEIS GLOBAIS ====================
         let currentUser = null;
         let isAdmin = false;
-        let allPilots = JSON.parse(localStorage.getItem("delta_airlines_rp_pilots") || '{}');
-        let allFlights = JSON.parse(localStorage.getItem("delta_airlines_rp_flights") || '[]');
-        let allTests = JSON.parse(localStorage.getItem("delta_airlines_rp_tests") || '{}');
-        let allMessages = JSON.parse(localStorage.getItem("delta_airlines_rp_messages") || '{}');
-        let chatMessages = JSON.parse(localStorage.getItem("delta_airlines_rp_chat") || '[]');
+        let allPilots = JSON.parse(localStorage.getItem(CONFIG.LOCAL_STORAGE_KEY + "_pilots") || '{}');
+        let allFlights = JSON.parse(localStorage.getItem(CONFIG.LOCAL_STORAGE_KEY + "_flights") || '[]');
+        let allTests = JSON.parse(localStorage.getItem(CONFIG.LOCAL_STORAGE_KEY + "_tests") || '{}');
+        let allMessages = JSON.parse(localStorage.getItem(CONFIG.LOCAL_STORAGE_KEY + "_messages") || '{}');
+        let chatMessages = JSON.parse(localStorage.getItem(CONFIG.LOCAL_STORAGE_KEY + "_chat") || '[]');
         let currentTest = null;
         let scoreChart = null;
-        
-        // ==================== SEU CADASTRO DE ADMIN JÁ CRIADO ====================
-        // Verificar e criar seu cadastro de admin se não existir
-        function initializeAdminAccount() {
-            const adminEmail = "ruanconceicao03052011@gmail.com";
-            let adminExists = false;
-            
-            // Verificar se já existe
-            for (let id in allPilots) {
-                if (allPilots[id].email === adminEmail) {
-                    adminExists = true;
-                    break;
-                }
-            }
-            
-            // Criar sua conta de admin se não existir
-            if (!adminExists) {
-                const adminId = "DL-ADMIN";
-                allPilots[adminId] = {
-                    id: adminId,
-                    name: "Ruan Conceição (Admin)",
-                    email: adminEmail,
-                    whatsapp: "",
-                    robloxUser: "RuanAdmin",
-                    age: 18,
-                    nationality: "Brasileiro",
-                    password: "admin123", // Senha padrão, você pode mudar depois
-                    score: 1000,
-                    level: 'Comandante',
-                    status: 'approved',
-                    isAdmin: true, // Flag especial para admin
-                    flights: [],
-                    tests: [],
-                    licenseExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-                    createdAt: new Date().toISOString(),
-                    lastLogin: new Date().toISOString()
-                };
-                
-                console.log("✅ Sua conta de admin foi criada:");
-                console.log("👤 ID: DL-ADMIN");
-                console.log("📧 Email: ruanconceicao03052011@gmail.com");
-                console.log("🔑 Senha: admin123");
-                console.log("🔐 Código Admin: DeltaAdmin2024!");
-                
-                saveData();
-            }
-        }
         
         // ==================== ELEMENTOS DOM ====================
         const elements = {
@@ -1549,15 +1502,15 @@
         }
         
         function saveData() {
-            localStorage.setItem("delta_airlines_rp_pilots", JSON.stringify(allPilots));
-            localStorage.setItem("delta_airlines_rp_flights", JSON.stringify(allFlights));
-            localStorage.setItem("delta_airlines_rp_tests", JSON.stringify(allTests));
-            localStorage.setItem("delta_airlines_rp_messages", JSON.stringify(allMessages));
-            localStorage.setItem("delta_airlines_rp_chat", JSON.stringify(chatMessages));
+            localStorage.setItem(CONFIG.LOCAL_STORAGE_KEY + "_pilots", JSON.stringify(allPilots));
+            localStorage.setItem(CONFIG.LOCAL_STORAGE_KEY + "_flights", JSON.stringify(allFlights));
+            localStorage.setItem(CONFIG.LOCAL_STORAGE_KEY + "_tests", JSON.stringify(allTests));
+            localStorage.setItem(CONFIG.LOCAL_STORAGE_KEY + "_messages", JSON.stringify(allMessages));
+            localStorage.setItem(CONFIG.LOCAL_STORAGE_KEY + "_chat", JSON.stringify(chatMessages));
         }
         
         function generatePilotId() {
-            const existingIds = Object.keys(allPilots).filter(id => !id.startsWith('DL-ADMIN'));
+            const existingIds = Object.keys(allPilots);
             let newId;
             do {
                 newId = "DL-" + String(existingIds.length + 1).padStart(3, '0');
@@ -1624,7 +1577,7 @@
             
             if (loginMode === 'admin') {
                 const adminCode = elements.adminCode.value.trim();
-                if (adminCode !== CONFIG.ADMIN_CODE) {
+                if (adminCode !== Delta Word) {
                     showNotification('Código administrativo incorreto', 'error');
                     return;
                 }
@@ -1658,17 +1611,12 @@
                 
                 if (pilot) {
                     currentUser = pilot;
-                    isAdmin = pilot.isAdmin || false;
+                    isAdmin = false;
                     
                     showNotification(`✅ Bem-vindo de volta, ${pilot.name}!`);
                     closeLoginModal();
                     showMainContent();
                     updatePilotDashboard();
-                    
-                    // Se for admin, desbloquear painel
-                    if (isAdmin) {
-                        unlockAdminPanel();
-                    }
                     
                 } else {
                     showNotification('E-mail/senha incorretos ou piloto não encontrado', 'error');
@@ -1790,9 +1738,6 @@
             
             // Verificar se há testes pendentes
             checkForPendingTest();
-            
-            // Atualizar link do servidor
-            elements.serverLinkText.textContent = CONFIG.ROBOX_SERVER_LINK;
         }
         
         function updatePilotDashboard() {
@@ -1820,8 +1765,8 @@
         }
         
         function updateOnlineCount() {
-            // Simulação: contar usuários ativos
-            const count = Object.keys(allPilots).length > 0 ? Object.keys(allPilots).length : 1;
+            // Simulação: contar usuários ativos (em produção, seria via backend)
+            const count = Object.keys(allPilots).length > 0 ? 1 : 0;
             elements.onlineCount.textContent = count;
         }
         
@@ -1840,7 +1785,7 @@
                     }
                     
                     // Se for aba testes e piloto não tem acesso, mostrar mensagem
-                    if (tabId === 'tests' && currentUser && currentUser.status === 'pending') {
+                    if (tabId === 'tests' && currentUser.status === 'pending') {
                         showNotification('Aguarde aprovação para realizar testes', 'info');
                         return;
                     }
@@ -1894,4 +1839,1225 @@
                     updateLicenseInfo();
                     break;
                 case 'admin':
-                    if (isAdmin) loadAdminPanel
+                    if (isAdmin) loadAdminPanel();
+                    break;
+                case 'server':
+                    updateServerStatus();
+                    break;
+            }
+        }
+        
+        function switchSubTab(subtabId) {
+            // Esconder todas as sub-abas
+            document.querySelectorAll('.admin-subtab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remover active de todos os botões de sub-aba
+            document.querySelectorAll('[data-subtab]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostrar sub-aba selecionada
+            document.getElementById('admin' + subtabId.charAt(0).toUpperCase() + subtabId.slice(1)).classList.add('active');
+            
+            // Ativar botão da sub-aba
+            document.querySelector(`[data-subtab="${subtabId}"]`).classList.add('active');
+        }
+        
+        // ==================== SISTEMA DE PONTUAÇÃO ====================
+        function initializeScoreChart() {
+            const ctx = document.getElementById('scoreChart').getContext('2d');
+            
+            // Dados de exemplo para o gráfico
+            const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+            const data = [10, 25, 45, 60, 80, currentUser?.score || 0];
+            
+            scoreChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Pontuação',
+                        data: data,
+                        borderColor: '#ff9900',
+                        backgroundColor: 'rgba(255, 153, 0, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#99ccff'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#99ccff'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#99ccff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateScoreChart() {
+            if (scoreChart) {
+                // Atualizar apenas o último ponto
+                scoreChart.data.datasets[0].data[5] = currentUser?.score || 0;
+                scoreChart.update();
+            }
+        }
+        
+        function addScore(points, reason) {
+            if (!currentUser || isAdmin) return;
+            
+            currentUser.score = (currentUser.score || 0) + points;
+            currentUser.level = getPilotLevel(currentUser.score);
+            
+            // Atualizar display
+            elements.currentPilotScore.textContent = currentUser.score;
+            elements.currentPilotLevel.textContent = currentUser.level;
+            
+            // Salvar
+            allPilots[currentUser.id] = currentUser;
+            saveData();
+            
+            // Atualizar gráfico
+            updateScoreChart();
+            
+            // Notificar
+            showNotification(`+${points} pontos: ${reason}`, 'success');
+            
+            // Verificar promoção de nível
+            checkLevelUp();
+        }
+        
+        function checkLevelUp() {
+            const oldLevel = getPilotLevel((currentUser.score || 0) - 10); // nível anterior
+            const newLevel = currentUser.level;
+            
+            if (oldLevel !== newLevel) {
+                showNotification(`🎉 Parabéns! Você subiu para o nível ${newLevel}!`, 'success');
+                
+                // Enviar mensagem automática no chat
+                addChatMessage('admin', `Parabéns! Você alcançou o nível ${newLevel}. Continue assim!`);
+            }
+        }
+        
+        // ==================== SISTEMA DE VOOS ====================
+        function updateUpcomingFlights() {
+            if (!currentUser || isAdmin) return;
+            
+            const upcoming = allFlights
+                .filter(flight => 
+                    flight.pilotId === currentUser.id && 
+                    flight.status === 'scheduled' &&
+                    new Date(flight.date) > new Date()
+                )
+                .slice(0, 3); // Mostrar apenas 3 próximos voos
+            
+            if (upcoming.length === 0) {
+                elements.upcomingFlights.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #99ccff; grid-column: 1 / -1;">
+                        Nenhum voo agendado
+                    </div>
+                `;
+                return;
+            }
+            
+            elements.upcomingFlights.innerHTML = upcoming.map(flight => `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Voo ${flight.number}</div>
+                        <div class="card-badge badge-pending">AGENDADO</div>
+                    </div>
+                    <div class="card-details">
+                        <div>
+                            <span>🛫 Origem:</span>
+                            <span>${flight.origin}</span>
+                        </div>
+                        <div>
+                            <span>🛬 Destino:</span>
+                            <span>${flight.destination}</span>
+                        </div>
+                        <div>
+                            <span>📅 Data:</span>
+                            <span>${new Date(flight.date).toLocaleDateString('pt-BR')}</span>
+                        </div>
+                        <div>
+                            <span>⏰ Hora:</span>
+                            <span>${flight.time}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewFlightDetails('${flight.id}')">
+                            📋 Detalhes
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function loadPilotFlights() {
+            if (!currentUser || isAdmin) return;
+            
+            const pilotFlights = allFlights.filter(flight => flight.pilotId === currentUser.id);
+            
+            if (pilotFlights.length === 0) {
+                elements.flightsTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #99ccff;">
+                            Nenhum voo encontrado
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            elements.flightsTable.innerHTML = pilotFlights.map(flight => `
+                <tr>
+                    <td>${flight.number}</td>
+                    <td>${flight.origin} → ${flight.destination}</td>
+                    <td>${new Date(flight.date).toLocaleDateString('pt-BR')} ${flight.time}</td>
+                    <td>${flight.aircraft}</td>
+                    <td>
+                        <span class="card-badge ${flight.status === 'completed' ? 'badge-approved' : 
+                                                flight.status === 'cancelled' ? 'badge-rejected' : 
+                                                'badge-pending'}">
+                            ${flight.status === 'completed' ? 'COMPLETO' : 
+                             flight.status === 'cancelled' ? 'CANCELADO' : 'AGENDADO'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-small btn-primary" onclick="viewFlightDetails('${flight.id}')">
+                            👁️ Ver
+                        </button>
+                        ${flight.status === 'scheduled' ? `
+                            <button class="btn btn-small btn-danger" onclick="cancelFlight('${flight.id}')">
+                                ❌ Cancelar
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function viewFlightDetails(flightId) {
+            const flight = allFlights.find(f => f.id === flightId);
+            if (!flight) return;
+            
+            alert(`Detalhes do Voo ${flight.number}:
+            
+🛫 Origem: ${flight.origin}
+🛬 Destino: ${flight.destination}
+📅 Data: ${new Date(flight.date).toLocaleDateString('pt-BR')}
+⏰ Hora: ${flight.time}
+✈️ Aeronave: ${flight.aircraft}
+📊 Status: ${flight.status}
+👨‍✈️ Piloto: ${allPilots[flight.pilotId]?.name || 'N/A'}
+📝 Notas: ${flight.notes || 'Nenhuma'}`);
+        }
+        
+        function cancelFlight(flightId) {
+            if (!confirm('Tem certeza que deseja cancelar este voo?')) return;
+            
+            const flightIndex = allFlights.findIndex(f => f.id === flightId);
+            if (flightIndex !== -1) {
+                allFlights[flightIndex].status = 'cancelled';
+                allFlights[flightIndex].cancelledAt = new Date().toISOString();
+                saveData();
+                loadPilotFlights();
+                updateUpcomingFlights();
+                showNotification('Voo cancelado com sucesso', 'info');
+            }
+        }
+        
+        function refreshFlights() {
+            loadPilotFlights();
+            showNotification('Voos atualizados', 'success');
+        }
+        
+        function showAvailableFlights() {
+            if (!currentUser || isAdmin) return;
+            
+            const availableFlights = allFlights.filter(flight => 
+                !flight.pilotId && 
+                flight.status === 'available' &&
+                new Date(flight.date) > new Date()
+            );
+            
+            if (availableFlights.length === 0) {
+                alert('Não há voos disponíveis no momento.');
+                return;
+            }
+            
+            let flightsText = 'VOOS DISPONÍVEIS:\n\n';
+            availableFlights.forEach(flight => {
+                flightsText += `✈️ Voo ${flight.number}\n`;
+                flightsText += `   ${flight.origin} → ${flight.destination}\n`;
+                flightsText += `   ${new Date(flight.date).toLocaleDateString('pt-BR')} ${flight.time}\n`;
+                flightsText += `   ${flight.aircraft}\n`;
+                flightsText += `   📞 Contate um admin para reservar\n\n`;
+            });
+            
+            alert(flightsText);
+        }
+        
+        // ==================== SISTEMA DE TESTES ====================
+        function checkForPendingTest() {
+            if (!currentUser || isAdmin) return;
+            
+            // Verificar se há teste atribuído
+            const pilotTests = Object.values(allTests).filter(test => 
+                test.pilotId === currentUser.id && 
+                !test.completed
+            );
+            
+            if (pilotTests.length > 0) {
+                currentTest = pilotTests[0];
+                elements.pilotTestSection.innerHTML = `
+                    <div style="text-align: center; padding: 30px;">
+                        <div style="font-size: 4rem; color: #ff9900; margin-bottom: 20px;">🧪</div>
+                        <h3 style="color: #ffffff; margin-bottom: 15px;">TESTE DISPONÍVEL!</h3>
+                        <p style="color: #99ccff; margin-bottom: 20px;">
+                            Você tem um teste de ${currentTest.name} para realizar.
+                        </p>
+                        <p style="color: #ffffff; background: rgba(255, 153, 0, 0.2); padding: 15px; border-radius: 10px; margin-bottom: 25px;">
+                            <strong>Instruções:</strong> ${currentTest.instructions || 'Realize o teste com atenção.'}
+                        </p>
+                        <button class="btn btn-primary" onclick="startTest('${currentTest.id}')" style="margin: 10px;">
+                            🚀 INICIAR TESTE
+                        </button>
+                        <button class="btn btn-secondary" onclick="askTestHelp()" style="margin: 10px;">
+                            ❓ PRECISO DE AJUDA
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        function checkForTest() {
+            checkForPendingTest();
+            if (!currentTest) {
+                showNotification('Nenhum teste disponível no momento', 'info');
+            }
+        }
+        
+        function startTest(testId) {
+            const test = allTests[testId];
+            if (!test) return;
+            
+            currentTest = test;
+            showTestModal();
+        }
+        
+        function showTestModal() {
+            if (!currentTest) return;
+            
+            elements.testContent.innerHTML = `
+                <div style="text-align: center;">
+                    <h3 style="color: #ff9900; margin-bottom: 20px;">${currentTest.name}</h3>
+                    <p style="color: #99ccff; margin-bottom: 30px;">
+                        ${currentTest.instructions || 'Responda todas as questões com atenção.'}
+                    </p>
+                    
+                    <div id="testQuestions" style="text-align: left; margin-bottom: 30px;">
+                        <!-- Questões serão injetadas aqui -->
+                        <div style="color: #99ccff; text-align: center; padding: 40px;">
+                            Carregando questões...
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px; justify-content: center;">
+                        <button class="btn btn-secondary" onclick="closeTestModal()">
+                            ❌ Cancelar
+                        </button>
+                        <button class="btn btn-primary" onclick="submitTest()" id="submitTestBtn">
+                            ✅ Finalizar Teste
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            elements.testModal.style.display = 'flex';
+            
+            // Carregar questões (simuladas)
+            setTimeout(loadTestQuestions, 500);
+        }
+        
+        function loadTestQuestions() {
+            if (!currentTest) return;
+            
+            const questionsContainer = document.getElementById('testQuestions');
+            const questions = currentTest.questions || generateTestQuestions();
+            
+            questionsContainer.innerHTML = questions.map((q, index) => `
+                <div style="background: rgba(0, 68, 136, 0.8); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                    <div style="color: #ff9900; font-weight: bold; margin-bottom: 10px;">
+                        Questão ${index + 1}: ${q.question}
+                    </div>
+                    <div style="color: #99ccff;">
+                        ${q.options.map((option, i) => `
+                            <div style="margin-bottom: 8px;">
+                                <input type="radio" id="q${index}_${i}" name="q${index}" value="${i}">
+                                <label for="q${index}_${i}" style="margin-left: 8px;">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function generateTestQuestions() {
+            // Gerar questões de exemplo para o teste
+            return [
+                {
+                    question: "O que fazer em caso de perda total de energia?",
+                    options: [
+                        "Manter a calma e seguir o checklist de emergência",
+                        "Pular do avião imediatamente",
+                        "Desligar todos os sistemas",
+                        "Pedir ajuda pelo rádio"
+                    ],
+                    correct: 0
+                },
+                {
+                    question: "Qual a altitude ideal para cruzeiro?",
+                    options: [
+                        "10.000 pés",
+                        "25.000 pés",
+                        "35.000 pés",
+                        "45.000 pés"
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "Como proceder em turbulência severa?",
+                    options: [
+                        "Aumentar a velocidade",
+                        "Reduzir para velocidade de turbulência",
+                        "Mudar de altitude imediatamente",
+                        "Desligar os motores"
+                    ],
+                    correct: 1
+                }
+            ];
+        }
+        
+        function submitTest() {
+            if (!currentTest) return;
+            
+            // Coletar respostas
+            const questions = currentTest.questions || generateTestQuestions();
+            let score = 0;
+            
+            for (let i = 0; i < questions.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected && parseInt(selected.value) === questions[i].correct) {
+                    score++;
+                }
+            }
+            
+            // Calcular porcentagem
+            const percentage = (score / questions.length) * 100;
+            const passed = percentage >= 70; // 70% para passar
+            
+            // Atualizar teste
+            currentTest.completed = true;
+            currentTest.score = score;
+            currentTest.total = questions.length;
+            currentTest.percentage = percentage;
+            currentTest.passed = passed;
+            currentTest.completedAt = new Date().toISOString();
+            
+            // Atualizar no armazenamento
+            allTests[currentTest.id] = currentTest;
+            
+            // Atualizar piloto
+            if (currentUser) {
+                if (!currentUser.tests) currentUser.tests = [];
+                currentUser.tests.push({
+                    id: currentTest.id,
+                    name: currentTest.name,
+                    score: score,
+                    total: questions.length,
+                    percentage: percentage,
+                    passed: passed,
+                    date: new Date().toISOString()
+                });
+                
+                // Adicionar pontos se passou
+                if (passed) {
+                    addScore(50, `Teste ${currentTest.name} aprovado`);
+                    
+                    // Se for primeiro teste e passou, aprovar piloto
+                    if (currentUser.status === 'testing' || currentUser.status === 'pending') {
+                        currentUser.status = 'approved';
+                        showNotification('🎉 Parabéns! Você foi aprovado como piloto!', 'success');
+                        
+                        // Enviar links
+                        sendApprovalLinks();
+                    }
+                } else {
+                    addScore(10, `Teste ${currentTest.name} (participação)`);
+                }
+                
+                allPilots[currentUser.id] = currentUser;
+            }
+            
+            saveData();
+            
+            // Mostrar resultado
+            closeTestModal();
+            
+            alert(`RESULTADO DO TESTE:
+            
+📊 Nota: ${score}/${questions.length} (${percentage.toFixed(1)}%)
+${passed ? '✅ APROVADO!' : '❌ REPROVADO'}
+${passed ? 'Parabéns! Você está apto para voar.' : 'Estude mais e tente novamente.'}`);
+            
+            // Atualizar interface
+            loadPilotTests();
+            updatePilotDashboard();
+        }
+        
+        function closeTestModal() {
+            elements.testModal.style.display = 'none';
+            currentTest = null;
+        }
+        
+        function askTestHelp() {
+            addChatMessage('pilot', 'Preciso de ajuda com o teste de pilotagem.');
+            showNotification('Mensagem enviada para a administração', 'info');
+            switchTab('chat');
+        }
+        
+        function loadPilotTests() {
+            if (!currentUser || isAdmin) return;
+            
+            const tests = currentUser.tests || [];
+            
+            if (tests.length === 0) {
+                elements.testHistorySection.style.display = 'none';
+                return;
+            }
+            
+            elements.testHistorySection.style.display = 'block';
+            elements.testHistory.innerHTML = tests.map(test => `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">${test.name}</div>
+                        <div class="card-badge ${test.passed ? 'badge-approved' : 'badge-rejected'}">
+                            ${test.passed ? 'APROVADO' : 'REPROVADO'}
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        <div>
+                            <span>📊 Nota:</span>
+                            <span>${test.score}/${test.total} (${test.percentage?.toFixed(1) || '0'}%)</span>
+                        </div>
+                        <div>
+                            <span>📅 Data:</span>
+                            <span>${new Date(test.date).toLocaleDateString('pt-BR')}</span>
+                        </div>
+                        <div>
+                            <span>⏱️ Tempo:</span>
+                            <span>${test.duration || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span>🎯 Status:</span>
+                            <span>${test.passed ? '✅ Aprovado' : '❌ Reprovado'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // ==================== SISTEMA DE CHAT ====================
+        function loadChatMessages() {
+            if (!currentUser) return;
+            
+            const pilotMessages = chatMessages.filter(msg => 
+                msg.pilotId === currentUser.id || msg.toAll === true
+            );
+            
+            elements.chatMessages.innerHTML = pilotMessages.map(msg => `
+                <div class="message ${msg.sender === 'admin' ? 'admin' : 'pilot'}">
+                    <div class="message-sender">${msg.sender === 'admin' ? 'Administração Delta' : currentUser.name}</div>
+                    <div class="message-content">${msg.content}</div>
+                    <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+            `).join('');
+            
+            // Rolar para baixo
+            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+        }
+        
+        function sendMessage() {
+            const content = elements.chatInput.value.trim();
+            if (!content || !currentUser) return;
+            
+            // Adicionar mensagem
+            const message = {
+                id: 'msg_' + Date.now(),
+                pilotId: currentUser.id,
+                sender: 'pilot',
+                content: content,
+                timestamp: new Date().toISOString(),
+                read: false
+            };
+            
+            chatMessages.push(message);
+            elements.chatInput.value = '';
+            
+            // Salvar
+            saveData();
+            
+            // Atualizar chat
+            loadChatMessages();
+            
+            // Notificar admin (simulado)
+            addAdminMessage(`Nova mensagem de ${currentUser.name}: ${content}`);
+        }
+        
+        function addChatMessage(sender, content) {
+            if (!currentUser) return;
+            
+            const message = {
+                id: 'msg_' + Date.now(),
+                pilotId: currentUser.id,
+                sender: sender,
+                content: content,
+                timestamp: new Date().toISOString(),
+                read: false
+            };
+            
+            chatMessages.push(message);
+            saveData();
+            
+            // Se estiver na aba chat, atualizar
+            if (document.getElementById('chat').classList.contains('active')) {
+                loadChatMessages();
+            }
+        }
+        
+        // ==================== SISTEMA DE CARTEIRA ====================
+        function updateLicenseInfo() {
+            if (!currentUser || isAdmin) return;
+            
+            elements.licenseIdShort.textContent = currentUser.id;
+            elements.licenseName.textContent = currentUser.name;
+            elements.licenseFullId.textContent = currentUser.id;
+            elements.licenseCategory.textContent = currentUser.level;
+            elements.licenseExpiry.textContent = new Date(currentUser.licenseExpiry).toLocaleDateString('pt-BR');
+            
+            // Habilitar botão do servidor se aprovado
+            if (currentUser.status === 'approved') {
+                elements.serverJoinBtn.disabled = false;
+                elements.mainServerJoinBtn.disabled = false;
+                elements.serverStatusBadge.textContent = 'LIBERADO';
+                elements.serverStatusBadge.className = 'card-badge badge-approved';
+                elements.serverLinkContainer.style.display = 'block';
+                elements.serverLinkText.textContent = CONFIG.ROBOX_SERVER_LINK;
+            }
+        }
+        
+        function viewLicense() {
+            if (!currentUser || isAdmin) return;
+            
+            elements.licenseContent.innerHTML = `
+                <div class="license-card">
+                    <div class="license-header">
+                        <div class="license-logo">✈️</div>
+                        <div class="license-title">DELTA AIRLINES RP</div>
+                        <div class="license-id">${currentUser.id}</div>
+                    </div>
+                    
+                    <div class="license-photo">
+                        👨‍✈️
+                    </div>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <div style="font-size: 1.8rem; color: #ffffff; font-weight: bold;">${currentUser.name}</div>
+                        <div style="color: #ff9900; margin-top: 5px;">PILOTO ${currentUser.level.toUpperCase()}</div>
+                    </div>
+                    
+                    <div class="license-info">
+                        <div class="license-field">
+                            <div class="field-label">ID de Piloto</div>
+                            <div class="field-value">${currentUser.id}</div>
+                        </div>
+                        <div class="license-field">
+                            <div class="field-label">Categoria</div>
+                            <div class="field-value">${currentUser.level}</div>
+                        </div>
+                        <div class="license-field">
+                            <div class="field-label">Pontuação</div>
+                            <div class="field-value">${currentUser.score || 0} pontos</div>
+                        </div>
+                        <div class="license-field">
+                            <div class="field-label">Status</div>
+                            <div class="field-value">${currentUser.status === 'approved' ? '✅ Ativo' : 
+                                                      currentUser.status === 'pending' ? '⏳ Pendente' : 
+                                                      currentUser.status === 'testing' ? '🧪 Em Teste' : '❌ Inativo'}</div>
+                        </div>
+                        <div class="license-field">
+                            <div class="field-label">Validade</div>
+                            <div class="field-value">${new Date(currentUser.licenseExpiry).toLocaleDateString('pt-BR')}</div>
+                        </div>
+                        <div class="license-field">
+                            <div class="field-label">Roblox User</div>
+                            <div class="field-value">${currentUser.robloxUser || 'N/A'}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="license-qr">
+                        <div class="qr-placeholder">📱</div>
+                        <div style="color: #99ccff; font-size: 0.8rem;">
+                            ID: ${currentUser.id}<br>
+                            Validade: ${new Date(currentUser.licenseExpiry).toLocaleDateString('pt-BR')}
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 25px; color: #99ccff; font-size: 0.8rem;">
+                        Carteira digital emitida em ${new Date().toLocaleDateString('pt-BR')}<br>
+                        Delta Airlines RP - Sistema de Licenciamento
+                    </div>
+                </div>
+            `;
+            
+            elements.licenseModal.style.display = 'flex';
+        }
+        
+        function closeLicenseModal() {
+            elements.licenseModal.style.display = 'none';
+        }
+        
+        function downloadLicense() {
+            alert('Funcionalidade de download PDF será implementada em breve!');
+            // Em produção, geraria um PDF da carteira
+        }
+        
+        function joinServer() {
+            if (!currentUser || currentUser.status !== 'approved') {
+                showNotification('Acesso ao servidor não liberado', 'error');
+                return;
+            }
+            
+            window.open(CONFIG.ROBOX_SERVER_LINK, '_blank');
+            showNotification('Abrindo servidor Roblox...');
+        }
+        
+        function joinWhatsAppGroup() {
+            window.open(CONFIG.WHATSAPP_GROUP_LINK, '_blank');
+            showNotification('Abrindo grupo do WhatsApp...');
+        }
+        
+        function updateServerStatus() {
+            if (!currentUser) return;
+            
+            if (currentUser.status === 'approved') {
+                elements.serverStatusBadge.textContent = 'LIBERADO';
+                elements.serverStatusBadge.className = 'card-badge badge-approved';
+                elements.mainServerJoinBtn.disabled = false;
+                elements.serverLinkContainer.style.display = 'block';
+                elements.serverLinkText.textContent = CONFIG.ROBOX_SERVER_LINK;
+            } else {
+                elements.serverStatusBadge.textContent = 'AGUARDANDO';
+                elements.serverStatusBadge.className = 'card-badge badge-pending';
+                elements.mainServerJoinBtn.disabled = true;
+                elements.serverLinkContainer.style.display = 'none';
+            }
+        }
+        
+        // ==================== SISTEMA DE APROVAÇÃO ====================
+        function sendApprovalLinks() {
+            if (!currentUser) return;
+            
+            // Enviar links via chat
+            addChatMessage('admin', `🎉 PARABÉNS! Você foi aprovado como piloto da Delta Airlines RP!
+            
+🔗 LINKS IMPORTANTES:
+
+🎮 Servidor Roblox:
+${https://www.roblox.com/share?code=d05a3163e2a0794480d4f23e122c1504&type=Server}
+
+📱 Grupo WhatsApp:
+${https://chat.whatsapp.com/IGETya2bgepDxqirxXwFPQ}
+
+📋 Sua carteira está disponível na aba "Minha Carteira".
+
+👨‍✈️ Bem-vindo a bordo, ${currentUser.name}!`);
+            
+            // Adicionar pontos de bônus
+            addScore(100, 'Aprovação como piloto');
+        }
+        
+        // ==================== SISTEMA ADMIN ====================
+        function showAdminLogin() {
+            loginMode = 'admin';
+            showLoginModal();
+            elements.adminLoginSection.style.display = 'block';
+            elements.loginModeText.textContent = 'Modo Admin';
+            elements.loginModeIcon.textContent = '👨‍✈️';
+        }
+        
+        function unlockAdminPanel() {
+            elements.adminTabBtn.classList.remove('locked');
+            elements.adminTabBtn.innerHTML = '<span>👨‍✈️</span> Painel Admin';
+            elements.adminContent.style.display = 'block';
+            loadAdminPanel();
+        }
+        
+        function loadAdminPanel() {
+            if (!isAdmin) return;
+            
+            // Estatísticas
+            const totalPilots = Object.keys(allPilots).length;
+            const pendingTests = Object.values(allTests).filter(t => !t.completed).length;
+            const scheduledFlights = allFlights.filter(f => f.status === 'scheduled').length;
+            const testsToday = Object.values(allTests).filter(t => 
+                t.completed && 
+                new Date(t.completedAt).toDateString() === new Date().toDateString()
+            ).length;
+            
+            elements.adminTotalPilots.textContent = totalPilots;
+            elements.adminPendingTests.textContent = pendingTests;
+            elements.adminScheduledFlights.textContent = scheduledFlights;
+            elements.adminTestsToday.textContent = testsToday;
+            
+            // Carregar pilotos
+            loadAdminPilots();
+            
+            // Carregar testes
+            loadAdminTests();
+            
+            // Carregar voos
+            loadAdminFlights();
+            
+            // Carregar mensagens
+            loadAdminMessages();
+        }
+        
+        function loadAdminPilots() {
+            const pilots = Object.values(allPilots);
+            
+            elements.adminPilotsTable.innerHTML = pilots.map(pilot => `
+                <tr>
+                    <td>${pilot.id}</td>
+                    <td>${pilot.name}</td>
+                    <td>
+                        <span class="card-badge ${pilot.status === 'approved' ? 'badge-approved' : 
+                                                pilot.status === 'pending' ? 'badge-pending' : 
+                                                pilot.status === 'testing' ? 'badge-testing' : 'badge-rejected'}">
+                            ${pilot.status === 'approved' ? 'APROVADO' : 
+                             pilot.status === 'pending' ? 'PENDENTE' : 
+                             pilot.status === 'testing' ? 'EM TESTE' : 'REPROVADO'}
+                        </span>
+                    </td>
+                    <td>${pilot.score || 0}</td>
+                    <td>${pilot.tests && pilot.tests.length > 0 ? 
+                         new Date(pilot.tests[pilot.tests.length - 1].date).toLocaleDateString('pt-BR') : 
+                         'Nenhum'}</td>
+                    <td>
+                        <button class="btn btn-small btn-primary" onclick="adminViewPilot('${pilot.id}')">
+                            👁️ Ver
+                        </button>
+                        <button class="btn btn-small btn-secondary" onclick="adminMessagePilot('${pilot.id}')">
+                            💬 Mensagem
+                        </button>
+                        <button class="btn btn-small btn-success" onclick="adminAssignTest('${pilot.id}')" ${pilot.status === 'approved' ? 'disabled' : ''}>
+                            🧪 Teste
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function loadAdminTests() {
+            const tests = Object.values(allTests);
+            
+            elements.adminTestsList.innerHTML = tests.map(test => `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">${test.name}</div>
+                        <div class="card-badge ${test.completed ? (test.passed ? 'badge-approved' : 'badge-rejected') : 'badge-pending'}">
+                            ${test.completed ? (test.passed ? 'COMPLETO' : 'REPROVADO') : 'PENDENTE'}
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        <div>
+                            <span>👨‍✈️ Piloto:</span>
+                            <span>${allPilots[test.pilotId]?.name || 'N/A'}</span>
+                        </div>
+                        ${test.completed ? `
+                            <div>
+                                <span>📊 Nota:</span>
+                                <span>${test.score}/${test.total} (${test.percentage?.toFixed(1) || '0'}%)</span>
+                            </div>
+                            <div>
+                                <span>📅 Data:</span>
+                                <span>${new Date(test.completedAt).toLocaleDateString('pt-BR')}</span>
+                            </div>
+                        ` : `
+                            <div>
+                                <span>📅 Atribuído:</span>
+                                <span>${new Date(test.assignedAt).toLocaleDateString('pt-BR')}</span>
+                            </div>
+                        `}
+                    </div>
+                    <div class="card-actions">
+                        ${!test.completed ? `
+                            <button class="btn btn-small btn-primary" onclick="adminSendTestReminder('${test.id}')">
+                                🔔 Lembrete
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-small btn-secondary" onclick="adminViewTestDetails('${test.id}')">
+                            📋 Detalhes
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function loadAdminFlights() {
+            elements.adminFlightsList.innerHTML = allFlights.map(flight => `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Voo ${flight.number}</div>
+                        <div class="card-badge ${flight.status === 'completed' ? 'badge-approved' : 
+                                                flight.status === 'cancelled' ? 'badge-rejected' : 
+                                                'badge-pending'}">
+                            ${flight.status === 'completed' ? 'COMPLETO' : 
+                             flight.status === 'cancelled' ? 'CANCELADO' : 
+                             flight.pilotId ? 'AGENDADO' : 'DISPONÍVEL'}
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        <div>
+                            <span>🛫 Rota:</span>
+                            <span>${flight.origin} → ${flight.destination}</span>
+                        </div>
+                        <div>
+                            <span>📅 Data:</span>
+                            <span>${new Date(flight.date).toLocaleDateString('pt-BR')} ${flight.time}</span>
+                        </div>
+                        <div>
+                            <span>✈️ Aeronave:</span>
+                            <span>${flight.aircraft}</span>
+                        </div>
+                        <div>
+                            <span>👨‍✈️ Piloto:</span>
+                            <span>${flight.pilotId ? allPilots[flight.pilotId]?.name : 'À designar'}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-small btn-primary" onclick="adminViewFlight('${flight.id}')">
+                            👁️ Ver
+                        </button>
+                        ${!flight.pilotId && flight.status === 'available' ? `
+                            <button class="btn btn-small btn-success" onclick="adminAssignFlight('${flight.id}')">
+                                👤 Designar
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-small btn-danger" onclick="adminCancelFlight('${flight.id}')">
+                            ❌ Cancelar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function loadAdminMessages() {
+            // Agrupar mensagens por piloto
+            const messagesByPilot = {};
+            chatMessages.forEach(msg => {
+                if (msg.sender === 'pilot') {
+                    if (!messagesByPilot[msg.pilotId]) {
+                        messagesByPilot[msg.pilotId] = {
+                            pilot: allPilots[msg.pilotId],
+                            messages: [],
+                            unread: 0
+                        };
+                    }
+                    messagesByPilot[msg.pilotId].messages.push(msg);
+                    if (!msg.read) messagesByPilot[msg.pilotId].unread++;
+                }
+            });
+            
+            const pilotsWithMessages = Object.values(messagesByPilot);
+            
+            if (pilotsWithMessages.length === 0) {
+                elements.adminMessagesList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #99ccff; grid-column: 1 / -1;">
+                        Nenhuma mensagem recebida
+                    </div>
+                `;
+                return;
+            }
+            
+            elements.adminMessagesList.innerHTML = pilotsWithMessages.map(data => `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">${data.pilot?.name || 'Piloto Desconhecido'}</div>
+                        ${data.unread > 0 ? `
+                            <div class="card-badge badge-pending">
+                                ${data.unread} NOVAS
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="card-details">
+                        <div>
+                            <span>🆔 ID:</span>
+                            <span>${data.pilot?.id || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span>📧 E-mail:</span>
+                            <span>${data.pilot?.email || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span>💬 Total Mensagens:</span>
+                            <span>${data.messages.length}</span>
+                        </div>
+                        <div>
+                            <span>🕒 Última:</span>
+                            <span>${data.messages.length > 0 ? 
+                                   new Date(data.messages[data.messages.length - 1].timestamp).toLocaleTimeString('pt-BR') : 
+                                   'N/A'}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-small btn-primary" onclick="adminChatWithPilot('${data.pilot?.id}')">
+                            💬 Responder
+                        </button>
+                        <button class="btn btn-small btn-secondary" onclick="adminViewPilotMessages('${data.pilot?.id}')">
+                            📋 Ver Todas
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function adminViewPilot(pilotId) {
+            const pilot = allPilots[pilotId];
+            if (!pilot) return;
+            
+            alert(`PERFIL DO PILOTO:
+            
+🆔 ID: ${pilot.id}
+👤 Nome: ${pilot.name}
+📧 E-mail: ${pilot.email}
+📱 WhatsApp: ${pilot.whatsapp || 'N/A'}
+🎮 Roblox: ${pilot.robloxUser}
+🎂 Idade: ${pilot.age}
+🌎 Nacionalidade: ${pilot.nationality}
+📊 Pontuação: ${pilot.score || 0}
+📈 Nível: ${pilot.level}
+📋 Status: ${pilot.status}
+📅 Cadastrado: ${new Date(pilot.createdAt).toLocaleDateString('pt-BR')}
+✈️ Voos Completos: ${pilot.flights?.filter(f => f.status === 'completed').length || 0}
+🧪 Testes: ${pilot.tests?.length || 0}
+`);
+        }
+        
+        function adminMessagePilot(pilotId) {
+            const pilot = allPilots[pilotId];
+            if (!pilot) return;
+            
+            const message = prompt(`Enviar mensagem para ${pilot.name}:`);
+            if (message) {
+                // Adicionar ao chat do piloto
+                const chatMessage = {
+                    id: 'msg_' + Date.now(),
+                    pilotId: pilotId,
+                    sender: 'admin',
+                    content: message,
+                    timestamp: new Date().toISOString(),
+                    read: false
+                };
+                
+                chatMessages.push(chatMessage);
+                saveData();
+                
+                showNotification(`Mensagem enviada para ${pilot.name}`, 'success');
+                
+                // Atualizar lista de mensagens
+                loadAdminMessages();
+            }
+        }
+        
+        function adminAssignTest(pilotId) {
+            const pilot = allPilots[pilotId];
+            if (!pilot || pilot.status === 'approved') return;
+            
+            const testType = prompt(`Atribuir teste para ${pilot.name}:\n\n1 - Teste Básico\n2 - Teste de Navegação\n3 - Teste de Emergência\n4 - Teste de Comunicação\n\nDigite o número do teste:`);
+            
+            if (!testType || testType < 1 || testType > 4) return;
+            
+            const testTypes = ['Teste Básico de Pilotagem', 'Teste de Navegação', 'Teste de Emergência', 'Teste de Comunicação'];
+            const testName = testTypes[parseInt(testType) - 1];
+            
+            // Criar teste
+            const testId = 'test_' + Date.now();
+            const test = {
+                id: testId,
+                pilotId: pilotId,
+                name: testName,
+                assignedBy: 'admin',
+                assignedAt: new Date().toISOString(),
+                completed: false,
+                instructions: 'Realize este teste com atenção. Você tem tempo ilimitado.'
+            };
+            
+            allTests[testId] = test;
+            
+            // Atualizar status do piloto
+            pilot.status = 'testing';
+            allPilots[pilotId] = pilot;
+            
+            saveData();
+            
+            // Enviar mensagem para o piloto
+            const chatMessage = {
+                id: 'msg_' + Date.now(),
+                pilotId: pilotId,
+                sender: 'admin',
+                content: `🧪 TESTE ATRIBUÍDO!\n\nVocê recebeu um ${testName} para realizar.\n\nAcesse a aba "Testes" para iniciar.`,
+                timestamp: new Date().toISOString(),
+                read: false
+            };
+            
+            chatMessages.push(chatMessage);
+            saveData();
+            
+            showNotification(`Teste atribuído para ${pilot.name}`, 'success');
+            loadAdminPanel();
+        }
+        
+        function showScheduleFlightModal() {
+            const flightNumber = prompt('Número do Voo (ex: DL101):');
+            if (!flightNumber) return;
+            
+            const origin = prompt('Aeroporto de Origem (ex: SBGR - Guarulhos):');
+            if (!origin) return;
+            
+            const destination = prompt('Aeroporto de Destino (ex: KJFK - Nova York):');
+            if (!destination) return;
+            
+            const date = prompt('Data do Voo (YYYY-MM-DD):');
+            if (!date) return;
+            
+            const time = prompt('Hora do Voo (ex: 14:30):');
+            if (!time) return;
+            
+            const aircraft = prompt('Aeronave (ex: Boeing 777-300ER):');
+            if (!aircraft) return;
+            
+            // Criar voo
+            const flight = {
+                id: 'flight_' + Date.now(),
+                number: flightNumber,
+                origin: origin,
+                destination: destination,
+                date: date + 'T00:00:00', // Formato ISO
+                time: time,
+                aircraft: aircraft,
+                status: 'available', // available, scheduled, completed, cancelled
+                createdAt: new Date().toISOString()
+            };
+            
+            allFlights.push(flight);
+            saveData();
+            
+            showNotification(`Voo ${flightNumber} agendado com sucesso!`, 'success');
+            loadAdminFlights();
+        }
+        
+        function scheduleFlight() {
+            showScheduleFlightModal();
+        }
+        
+        function showAllPilots() {
+            switchSubTab('pilots');
+        }
+        
+        function addAdminMessage(content) {
+            // Simular notificação para admin
+            console.log(`📢 Mensagem para admin: ${content}`);
+        }
+        
+        // ==================== INICIALIZAÇÃO ====================
+        function init() {
+            // Inicializar abas
+            initializeTabs();
+            
+            // Mostrar modal de login inicial
+            setTimeout(() => {
+                showLoginModal();
+            }, 500);
+            
+            // Carregar dados de exemplo se vazio
+            if (Object.keys(allPilots).length === 0) {
+                // Adicionar alguns pilotos de exemplo
+                allPilots['DL-001'] = {
+                    id: 'DL-001',
+                    name: 'João Silva',
+                    email: 'joao@exemplo.com',
+                    robloxUser: 'PilotJoao',
+                    age: 25,
+                    nationality: 'Brasileiro',
+                    password: '123456',
+                    score: 150,
+                    level: 'Piloto Jr',
+                    status: 'approved',
+                    licenseExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Adicionar alguns voos de exemplo
+                allFlights.push({
+                    id: 'flight_1',
+                    number: 'DL101',
+                    origin: 'SBGR - Guarulhos',
+                    destination: 'KJFK - Nova York',
+                    date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+                    time: '14:30',
+                    aircraft: 'Boeing 777-300ER',
+                    status: 'available',
+                    createdAt: new Date().toISOString()
+                });
+                
+                saveData();
+            }
+            
+            console.log('✅ Sistema Delta Airlines RP inicializado!');
+            console.log('⚠️ Lembre-se de configurar:');
+            console.log('1. ADMIN_CODE no código (linha 2218)');
+            console.log('2. WHATSAPP_GROUP_LINK (linha 2219)');
+            console.log('3. ROBOX_SERVER_LINK (linha 2220)');
+        }
+        
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
