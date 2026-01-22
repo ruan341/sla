@@ -5,209 +5,371 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delta Airlines RP - Sistema de Licenciamento</title>
     <style>
-        /* [Todo o CSS permanece igual] */
-        /* ... [Todo o código CSS anterior permanece igual] ... */
+        /* ESTILOS SIMPLIFICADOS PARA EVITAR ERROS */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #003366, #0066cc);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        header {
+            background: rgba(0, 51, 102, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 2px solid #ff9900;
+        }
+        
+        h1 {
+            color: #ff9900;
+            margin-bottom: 10px;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0, 68, 136, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background: #0066cc;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .tab-btn.active {
+            background: #ff9900;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: rgba(0, 51, 102, 0.9);
+            border-radius: 10px;
+        }
+        
+        .tab-content.active { display: block; }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .btn-primary { background: #ff9900; color: white; }
+        .btn-secondary { background: #0066cc; color: white; }
+        
+        .card {
+            background: rgba(0, 68, 136, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: #003366;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid #ff9900;
+        }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #99ccff; }
+        .form-group input { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ff9900; background: #002244; color: white; }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <!-- MODAIS (mantidos iguais) -->
-    <!-- ... [Todo o código HTML dos modais permanece igual] ... -->
-
-    <!-- CONTEÚDO PRINCIPAL (APÓS LOGIN) -->
+    <!-- MODAL DE LOGIN -->
+    <div id="loginModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+            <h2 style="color: #ff9900; margin-bottom: 20px;">🔐 LOGIN</h2>
+            <div class="form-group">
+                <label>E-mail ou ID</label>
+                <input type="text" id="loginEmail" placeholder="seu@email.com">
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="loginPassword" placeholder="Sua senha">
+            </div>
+            <div class="form-group" id="adminCodeSection" style="display: none;">
+                <label>Código Admin</label>
+                <input type="password" id="adminCode" placeholder="Código administrativo">
+            </div>
+            <button class="btn btn-primary" onclick="toggleAdminLogin()" style="margin-bottom: 10px;">
+                Modo: <span id="loginMode">Piloto</span>
+            </button>
+            <button class="btn btn-primary" onclick="attemptLogin()" style="width: 100%;">
+                ENTRAR
+            </button>
+            <p style="text-align: center; margin-top: 15px; color: #99ccff;">
+                Não tem conta? <a href="#" onclick="showRegisterModal()" style="color: #ff9900;">Cadastre-se</a>
+            </p>
+        </div>
+    </div>
+    
+    <!-- CONTEÚDO PRINCIPAL -->
     <div id="mainContent" style="display: none;">
-        <!-- ... [Todo o conteúdo HTML permanece igual] ... -->
+        <div class="container">
+            <header>
+                <h1>✈️ DELTA AIRLINES RP</h1>
+                <p>Sistema de Licenciamento de Pilotos</p>
+                <div class="status-bar">
+                    <div>👤 <span id="currentPilotName">-</span></div>
+                    <div>🆔 <span id="currentPilotId">-</span></div>
+                    <div>📊 <span id="currentPilotScore">0</span> pontos</div>
+                    <button class="btn btn-secondary" onclick="logout()">Sair</button>
+                </div>
+            </header>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+                <button class="tab-btn" data-tab="flights">✈️ Meus Voos</button>
+                <button class="tab-btn" data-tab="tests">🧪 Testes</button>
+                <button class="tab-btn" data-tab="license">📋 Carteira</button>
+                <button class="tab-btn" id="adminTab" data-tab="admin">👨‍✈️ Admin</button>
+            </div>
+            
+            <!-- DASHBOARD -->
+            <div id="dashboard" class="tab-content active">
+                <h2>Bem-vindo, <span id="welcomeName">Piloto</span>!</h2>
+                <div class="card">
+                    <h3>📈 Sua Pontuação: <span id="dashboardScore">0</span></h3>
+                    <p>Status: <span id="dashboardStatus">Pendente</span></p>
+                    <p>Nível: <span id="dashboardLevel">Aprendiz</span></p>
+                </div>
+            </div>
+            
+            <!-- VOOS -->
+            <div id="flights" class="tab-content">
+                <h2>✈️ Meus Voos</h2>
+                <div id="flightsList">
+                    <div class="card">Nenhum voo agendado</div>
+                </div>
+            </div>
+            
+            <!-- TESTES -->
+            <div id="tests" class="tab-content">
+                <h2>🧪 Testes</h2>
+                <div id="testsContent">
+                    <div class="card">
+                        <p>Aguardando teste ser atribuído</p>
+                        <button class="btn btn-primary" onclick="checkForTest()">Verificar Teste</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CARTEIRA -->
+            <div id="license" class="tab-content">
+                <h2>📋 Minha Carteira</h2>
+                <div class="card">
+                    <p><strong>Nome:</strong> <span id="licenseName">-</span></p>
+                    <p><strong>ID:</strong> <span id="licenseId">-</span></p>
+                    <p><strong>Categoria:</strong> <span id="licenseCategory">-</span></p>
+                    <button class="btn btn-primary" onclick="viewLicense()">Ver Carteira Completa</button>
+                </div>
+            </div>
+            
+            <!-- ADMIN -->
+            <div id="admin" class="tab-content">
+                <div id="adminLoginPrompt">
+                    <h2>🔐 Área Administrativa</h2>
+                    <p>Faça login como administrador para acessar</p>
+                    <button class="btn btn-primary" onclick="showAdminLogin()">Login Admin</button>
+                </div>
+                
+                <div id="adminContent" style="display: none;">
+                    <h2>👨‍✈️ Painel de Administração</h2>
+                    
+                    <div class="tabs">
+                        <button class="tab-btn" data-subtab="pilots">👥 Pilotos</button>
+                        <button class="tab-btn" data-subtab="tests">🧪 Testes</button>
+                        <button class="tab-btn" data-subtab="flights">✈️ Voos</button>
+                    </div>
+                    
+                    <!-- SUB-ABAS -->
+                    <div id="adminPilots" class="admin-subtab" style="display: none;">
+                        <h3>Pilotos Cadastrados: <span id="pilotCount">0</span></h3>
+                        <div id="pilotsList"></div>
+                    </div>
+                    
+                    <div id="adminTests" class="admin-subtab" style="display: none;">
+                        <h3>Testes</h3>
+                        <button class="btn btn-primary" onclick="createTest()">Criar Teste</button>
+                        <div id="testsList"></div>
+                    </div>
+                    
+                    <div id="adminFlights" class="admin-subtab" style="display: none;">
+                        <h3>Voos</h3>
+                        <button class="btn btn-primary" onclick="scheduleFlight()">Agendar Voo</button>
+                        <div id="flightsAdminList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         // ==================== CONFIGURAÇÃO ====================
         const CONFIG = {
-            ADMIN_CODE: "DeltaAdmin2024!",
-            LOCAL_STORAGE_KEY: "delta_airlines_rp",
-            WHATSAPP_GROUP_LINK: "https://chat.whatsapp.com/IGETya2bgepDxqirxXwFPQ",
-            ROBOX_SERVER_LINK: "https://www.roblox.com/share?code=d05a3163e2a0794480d4f23e122c1504&type=Server",
-            VERSION: "1.1",
-            
-            LEVELS: [
-                { name: "Aprendiz", minScore: 0, maxScore: 99 },
-                { name: "Piloto Jr", minScore: 100, maxScore: 299 },
-                { name: "Piloto Sênior", minScore: 300, maxScore: 599 },
-                { name: "Capitão", minScore: 600, maxScore: 999 },
-                { name: "Comandante", minScore: 1000, maxScore: 9999 }
-            ]
+            ADMIN_CODE: "admin123",
+            STORAGE_KEY: "delta_airlines"
         };
         
-        // ==================== VARIÁVEIS GLOBAIS ====================
+        // ==================== VARIÁVEIS ====================
         let currentUser = null;
         let isAdmin = false;
-        let allPilots = {};
-        let allFlights = [];
-        let allTests = {};
-        let chatMessages = [];
-        let currentTest = null;
-        let scoreChart = null;
-        let chatInterval = null;
+        let pilots = {};
+        let flights = [];
+        let tests = {};
         
-        // ==================== ELEMENTOS DOM ====================
-        const elements = {};
-        
-        // ==================== SISTEMA DE PERSISTÊNCIA ====================
-        function loadData() {
-            // Carregar dados do localStorage
-            const pilotsData = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEY + "_pilots");
-            const flightsData = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEY + "_flights");
-            const testsData = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEY + "_tests");
-            const chatData = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEY + "_chat");
-            const sessionData = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEY + "_session");
+        // ==================== INICIALIZAÇÃO ====================
+        function init() {
+            console.log("Sistema iniciando...");
             
-            // Parse dos dados
-            allPilots = pilotsData ? JSON.parse(pilotsData) : {};
-            allFlights = flightsData ? JSON.parse(flightsData) : [];
-            allTests = testsData ? JSON.parse(testsData) : {};
-            chatMessages = chatData ? JSON.parse(chatData) : [];
+            // Carregar dados salvos
+            loadData();
             
-            // Restaurar sessão se existir
-            if (sessionData) {
-                const session = JSON.parse(sessionData);
-                if (session.expires > Date.now()) {
-                    if (session.isAdmin) {
-                        // Login como admin
-                        isAdmin = true;
-                        currentUser = {
-                            id: 'ADMIN',
-                            name: 'Administrador Delta',
-                            email: session.email,
-                            isAdmin: true
-                        };
-                        autoLogin();
-                    } else {
-                        // Login como piloto
-                        const pilot = allPilots[session.userId];
-                        if (pilot && pilot.password === session.password) {
-                            currentUser = pilot;
-                            isAdmin = false;
-                            autoLogin();
-                        }
+            // Verificar sessão salva
+            const session = localStorage.getItem(CONFIG.STORAGE_KEY + "_session");
+            if (session) {
+                try {
+                    const sessionData = JSON.parse(session);
+                    if (sessionData.expires > Date.now()) {
+                        autoLogin(sessionData);
                     }
-                } else {
-                    // Sessão expirada
-                    localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEY + "_session");
+                } catch(e) {
+                    console.log("Sessão inválida");
                 }
+            }
+            
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Mostrar login se não estiver logado
+            if (!currentUser) {
+                showLoginModal();
+            }
+        }
+        
+        function loadData() {
+            try {
+                const pilotsData = localStorage.getItem(CONFIG.STORAGE_KEY + "_pilots");
+                const flightsData = localStorage.getItem(CONFIG.STORAGE_KEY + "_flights");
+                const testsData = localStorage.getItem(CONFIG.STORAGE_KEY + "_tests");
+                
+                pilots = pilotsData ? JSON.parse(pilotsData) : {};
+                flights = flightsData ? JSON.parse(flightsData) : [];
+                tests = testsData ? JSON.parse(testsData) : {};
+                
+                // Se não houver dados, criar exemplos
+                if (Object.keys(pilots).length === 0) {
+                    createSampleData();
+                }
+            } catch(e) {
+                console.error("Erro ao carregar dados:", e);
+                pilots = {};
+                flights = [];
+                tests = {};
             }
         }
         
         function saveData() {
             try {
-                localStorage.setItem(CONFIG.LOCAL_STORAGE_KEY + "_pilots", JSON.stringify(allPilots));
-                localStorage.setItem(CONFIG.LOCAL_STORAGE_KEY + "_flights", JSON.stringify(allFlights));
-                localStorage.setItem(CONFIG.LOCAL_STORAGE_KEY + "_tests", JSON.stringify(allTests));
-                localStorage.setItem(CONFIG.LOCAL_STORAGE_KEY + "_chat", JSON.stringify(chatMessages));
-            } catch (e) {
-                console.error("Erro ao salvar dados:", e);
+                localStorage.setItem(CONFIG.STORAGE_KEY + "_pilots", JSON.stringify(pilots));
+                localStorage.setItem(CONFIG.STORAGE_KEY + "_flights", JSON.stringify(flights));
+                localStorage.setItem(CONFIG.STORAGE_KEY + "_tests", JSON.stringify(tests));
+            } catch(e) {
+                console.error("Erro ao salvar:", e);
             }
         }
         
-        function saveSession() {
-            if (!currentUser) return;
-            
-            const session = {
-                userId: currentUser.id,
-                email: currentUser.email,
-                password: currentUser.password,
-                isAdmin: isAdmin,
-                expires: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 dias
+        function createSampleData() {
+            // Piloto de exemplo
+            pilots["DL-001"] = {
+                id: "DL-001",
+                name: "João Silva",
+                email: "joao@exemplo.com",
+                password: "123456",
+                score: 100,
+                status: "approved",
+                level: "Piloto Jr"
             };
             
-            localStorage.setItem(CONFIG.LOCAL_STORAGE_KEY + "_session", JSON.stringify(session));
-        }
-        
-        function autoLogin() {
-            if (!currentUser) {
-                showLoginModal();
-                return;
-            }
+            // Piloto pendente
+            pilots["DL-002"] = {
+                id: "DL-002",
+                name: "Maria Santos",
+                email: "maria@exemplo.com",
+                password: "123456",
+                score: 0,
+                status: "pending",
+                level: "Aprendiz"
+            };
             
-            if (isAdmin) {
-                showNotification(`✅ Bem-vindo de volta, Administrador!`);
-            } else {
-                showNotification(`✅ Bem-vindo de volta, ${currentUser.name}!`);
-            }
+            // Voo de exemplo
+            flights.push({
+                id: "flight1",
+                number: "DL101",
+                origin: "São Paulo",
+                destination: "Nova York",
+                date: "2024-12-15",
+                time: "14:30",
+                pilotId: "DL-001",
+                status: "scheduled"
+            });
             
-            showMainContent();
-            saveSession();
-        }
-        
-        // ==================== FUNÇÕES UTILITÁRIAS ====================
-        function showNotification(message, type = 'success') {
-            // Criar elemento se não existir
-            let notification = document.getElementById('notification');
-            if (!notification) {
-                notification = document.createElement('div');
-                notification.id = 'notification';
-                notification.className = 'notification';
-                document.body.appendChild(notification);
-            }
+            // Teste de exemplo
+            tests["test1"] = {
+                id: "test1",
+                name: "Teste Básico",
+                pilotId: "DL-002",
+                status: "pending"
+            };
             
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.style.display = 'block';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 4000);
-            
-            console.log(`📢 ${message}`);
+            saveData();
         }
         
-        function generatePilotId() {
-            const existingIds = Object.keys(allPilots);
-            let newId;
-            do {
-                newId = "DL-" + String(existingIds.length + 1).padStart(3, '0');
-            } while (existingIds.includes(newId));
-            return newId;
-        }
-        
-        function getPilotLevel(score) {
-            for (let level of CONFIG.LEVELS) {
-                if (score >= level.minScore && score <= level.maxScore) {
-                    return level.name;
-                }
-            }
-            return "Aprendiz";
-        }
-        
-        function getCurrentTime() {
-            const now = new Date();
-            return now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        }
-        
-        // ==================== SISTEMA DE LOGIN/CADASTRO ====================
+        // ==================== LOGIN ====================
         let loginMode = 'pilot';
         
-        function showLoginModal() {
-            document.getElementById('loginModal').style.display = 'flex';
-        }
-        
-        function closeLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-        }
-        
-        function toggleLoginMode() {
+        function toggleAdminLogin() {
             loginMode = loginMode === 'pilot' ? 'admin' : 'pilot';
-            const adminSection = document.getElementById('adminLoginSection');
-            
-            if (loginMode === 'admin') {
-                document.getElementById('loginModeText').textContent = 'Modo Admin';
-                document.getElementById('loginModeIcon').textContent = '👨‍✈️';
-                adminSection.style.display = 'block';
-                document.getElementById('loginEmail').placeholder = 'Seu e-mail administrativo';
-            } else {
-                document.getElementById('loginModeText').textContent = 'Modo Piloto';
-                document.getElementById('loginModeIcon').textContent = '👤';
-                adminSection.style.display = 'none';
-                document.getElementById('loginEmail').placeholder = 'seu@email.com ou DL-001';
-            }
+            document.getElementById('loginMode').textContent = loginMode === 'admin' ? 'Admin' : 'Piloto';
+            document.getElementById('adminCodeSection').style.display = loginMode === 'admin' ? 'block' : 'none';
         }
         
         function attemptLogin() {
@@ -215,1132 +377,415 @@
             const password = document.getElementById('loginPassword').value.trim();
             
             if (!email || !password) {
-                showNotification('Preencha todos os campos', 'error');
+                alert("Preencha todos os campos");
                 return;
             }
             
             if (loginMode === 'admin') {
                 const adminCode = document.getElementById('adminCode').value.trim();
                 if (adminCode !== CONFIG.ADMIN_CODE) {
-                    showNotification('Código administrativo incorreto', 'error');
+                    alert("Código administrativo incorreto");
                     return;
                 }
                 
                 // Login como admin
                 isAdmin = true;
                 currentUser = {
-                    id: 'ADMIN',
-                    name: 'Administrador Delta',
+                    id: "ADMIN",
+                    name: "Administrador",
                     email: email,
-                    password: adminCode,
                     isAdmin: true
                 };
                 
-                showNotification('✅ Login administrativo realizado com sucesso!');
-                closeLoginModal();
+                saveSession();
                 showMainContent();
                 unlockAdminPanel();
-                saveSession();
                 
             } else {
                 // Login como piloto
-                let pilot = null;
+                let pilotFound = null;
                 
-                // Buscar por e-mail ou ID
-                for (let id in allPilots) {
-                    const p = allPilots[id];
-                    if ((p.email === email || p.id === email) && p.password === password) {
-                        pilot = p;
+                for (const id in pilots) {
+                    const pilot = pilots[id];
+                    if ((pilot.email === email || pilot.id === email) && pilot.password === password) {
+                        pilotFound = pilot;
                         break;
                     }
                 }
                 
-                if (pilot) {
-                    currentUser = pilot;
+                if (pilotFound) {
+                    currentUser = pilotFound;
                     isAdmin = false;
-                    
-                    showNotification(`✅ Bem-vindo de volta, ${pilot.name}!`);
-                    closeLoginModal();
-                    showMainContent();
-                    updatePilotDashboard();
                     saveSession();
-                    
+                    showMainContent();
                 } else {
-                    showNotification('E-mail/senha incorretos ou piloto não encontrado', 'error');
+                    alert("Credenciais inválidas");
                 }
             }
+        }
+        
+        function autoLogin(sessionData) {
+            if (sessionData.isAdmin) {
+                isAdmin = true;
+                currentUser = {
+                    id: "ADMIN",
+                    name: "Administrador",
+                    email: sessionData.email,
+                    isAdmin: true
+                };
+                showMainContent();
+                unlockAdminPanel();
+            } else {
+                const pilot = pilots[sessionData.userId];
+                if (pilot && pilot.password === sessionData.password) {
+                    currentUser = pilot;
+                    isAdmin = false;
+                    showMainContent();
+                }
+            }
+        }
+        
+        function saveSession() {
+            const session = {
+                userId: currentUser.id,
+                email: currentUser.email,
+                password: currentUser.password,
+                isAdmin: isAdmin,
+                expires: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 dias
+            };
+            localStorage.setItem(CONFIG.STORAGE_KEY + "_session", JSON.stringify(session));
         }
         
         function logout() {
             currentUser = null;
             isAdmin = false;
             document.getElementById('mainContent').style.display = 'none';
-            clearInterval(chatInterval);
-            localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEY + "_session");
+            localStorage.removeItem(CONFIG.STORAGE_KEY + "_session");
             showLoginModal();
-            showNotification('👋 Logout realizado com sucesso');
         }
         
-        // ==================== CONTEÚDO PRINCIPAL ====================
+        // ==================== INTERFACE ====================
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+        
         function showMainContent() {
-            const mainContent = document.getElementById('mainContent');
-            if (!mainContent) return;
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
             
-            mainContent.style.display = 'block';
-            
-            // Inicializar elementos DOM
-            initializeDOMElements();
-            
-            // Atualizar informações do usuário
-            if (currentUser) {
-                document.getElementById('currentPilotName').textContent = currentUser.name;
-                document.getElementById('currentPilotScore').textContent = currentUser.score || 0;
-                document.getElementById('currentPilotId').textContent = currentUser.id;
-                document.getElementById('currentPilotLevel').textContent = getPilotLevel(currentUser.score || 0);
-                
-                // Atualizar última data de login
-                currentUser.lastLogin = new Date().toISOString();
-                saveData();
-            }
-            
-            // Inicializar gráfico
-            initializeScoreChart();
-            
-            // Verificar se há testes pendentes
-            checkForPendingTest();
-            
-            // Iniciar atualização automática do chat
-            startChatAutoRefresh();
-            
-            // Inicializar abas
-            initializeTabs();
-            
-            // Se for admin, desbloquear painel
-            if (isAdmin) {
-                unlockAdminPanel();
-            }
+            updateUserInfo();
+            loadDashboard();
         }
         
-        function initializeDOMElements() {
-            // Cache de elementos DOM para melhor performance
-            const ids = [
-                'currentPilotName', 'currentPilotScore', 'currentPilotId', 'currentPilotLevel',
-                'dashboardStatus', 'completedFlights', 'completedTests', 'totalScore', 'nextLevelAt',
-                'upcomingFlights', 'flightsTable', 'pilotTestSection', 'testHistorySection',
-                'testHistory', 'chatMessages', 'chatInput', 'chatStatus', 'licenseIdShort',
-                'licenseName', 'licenseFullId', 'licenseCategory', 'licenseExpiry', 'serverJoinBtn',
-                'mainServerJoinBtn', 'serverStatusBadge', 'serverLinkContainer', 'serverLinkText',
-                'adminContent', 'adminTabBtn', 'adminLoginBtn', 'adminTotalPilots', 'adminPendingTests',
-                'adminScheduledFlights', 'adminTestsToday', 'adminPilotsTable', 'adminTestsList',
-                'adminFlightsList', 'adminMessagesList', 'onlineCount'
-            ];
+        function updateUserInfo() {
+            if (!currentUser) return;
             
-            ids.forEach(id => {
-                elements[id] = document.getElementById(id);
-            });
+            document.getElementById('currentPilotName').textContent = currentUser.name;
+            document.getElementById('currentPilotId').textContent = currentUser.id;
+            document.getElementById('currentPilotScore').textContent = currentUser.score || 0;
+            document.getElementById('welcomeName').textContent = currentUser.name;
+            document.getElementById('dashboardScore').textContent = currentUser.score || 0;
+            document.getElementById('dashboardStatus').textContent = currentUser.status || "Pendente";
+            document.getElementById('dashboardLevel').textContent = currentUser.level || "Aprendiz";
+            document.getElementById('licenseName').textContent = currentUser.name;
+            document.getElementById('licenseId').textContent = currentUser.id;
+            document.getElementById('licenseCategory').textContent = currentUser.level || "Aprendiz";
         }
         
-        function updatePilotDashboard() {
-            if (!currentUser || isAdmin) return;
-            
-            // Atualizar status
-            elements.dashboardStatus.textContent = currentUser.status === 'approved' ? 'Aprovado' : 
-                                                  currentUser.status === 'testing' ? 'Em Teste' : 
-                                                  currentUser.status === 'rejected' ? 'Reprovado' : 'Pendente';
-            
-            // Atualizar estatísticas
-            const completedFlights = currentUser.flights?.filter(f => f.status === 'completed').length || 0;
-            const completedTests = currentUser.tests?.filter(t => t.completed).length || 0;
-            
-            elements.completedFlights.textContent = completedFlights;
-            elements.completedTests.textContent = completedTests;
-            elements.totalScore.textContent = currentUser.score || 0;
-            elements.nextLevelAt.textContent = getNextLevelScore(currentUser.score || 0) + ' pontos';
-            
-            // Atualizar próximos voos
-            updateUpcomingFlights();
-            
-            // Atualizar gráfico
-            updateScoreChart();
-        }
-        
-        function getNextLevelScore(score) {
-            for (let level of CONFIG.LEVELS) {
-                if (score >= level.minScore && score <= level.maxScore) {
-                    return level.maxScore + 1;
-                }
-            }
-            return 100;
-        }
-        
-        // ==================== SISTEMA DE ABAS ====================
-        function initializeTabs() {
+        function setupEventListeners() {
             // Abas principais
-            const tabBtns = document.querySelectorAll('.tab-btn:not(.locked)');
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tabId = btn.dataset.tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
                     
                     if (tabId === 'admin' && !isAdmin) {
                         showAdminLogin();
                         return;
                     }
                     
-                    switchTab(tabId);
+                    // Remover active de todos
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Ativar aba clicada
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Carregar conteúdo da aba
+                    switch(tabId) {
+                        case 'dashboard':
+                            loadDashboard();
+                            break;
+                        case 'flights':
+                            loadFlights();
+                            break;
+                        case 'tests':
+                            loadTests();
+                            break;
+                        case 'admin':
+                            if (isAdmin) loadAdminPanel();
+                            break;
+                    }
                 });
             });
             
             // Sub-abas do admin
-            const subTabBtns = document.querySelectorAll('[data-subtab]');
-            subTabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const subtabId = btn.dataset.subtab;
-                    switchSubTab(subtabId);
+            document.querySelectorAll('[data-subtab]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const subtabId = this.dataset.subtab;
+                    
+                    // Esconder todas sub-abas
+                    document.querySelectorAll('.admin-subtab').forEach(tab => {
+                        tab.style.display = 'none';
+                    });
+                    
+                    // Mostrar sub-aba selecionada
+                    document.getElementById('admin' + subtabId.charAt(0).toUpperCase() + subtabId.slice(1)).style.display = 'block';
+                    
+                    // Carregar conteúdo
+                    switch(subtabId) {
+                        case 'pilots':
+                            loadAdminPilots();
+                            break;
+                        case 'tests':
+                            loadAdminTests();
+                            break;
+                        case 'flights':
+                            loadAdminFlights();
+                            break;
+                    }
                 });
             });
-            
-            // Ativar aba dashboard por padrão
-            switchTab('dashboard');
         }
         
-        function switchTab(tabId) {
-            // Esconder todas as abas
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Remover active de todos os botões
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Mostrar aba selecionada
-            const tabElement = document.getElementById(tabId);
-            if (tabElement) {
-                tabElement.classList.add('active');
-            }
-            
-            // Ativar botão da aba
-            const tabBtn = document.querySelector(`[data-tab="${tabId}"]`);
-            if (tabBtn) {
-                tabBtn.classList.add('active');
-            }
-            
-            // Ações específicas por aba
-            switch(tabId) {
-                case 'dashboard':
-                    updatePilotDashboard();
-                    break;
-                case 'flights':
-                    loadPilotFlights();
-                    break;
-                case 'tests':
-                    loadPilotTests();
-                    break;
-                case 'chat':
-                    loadChatMessages();
-                    break;
-                case 'license':
-                    updateLicenseInfo();
-                    break;
-                case 'admin':
-                    if (isAdmin) loadAdminPanel();
-                    break;
-                case 'server':
-                    updateServerStatus();
-                    break;
-            }
+        // ==================== FUNÇÕES DO PILOTO ====================
+        function loadDashboard() {
+            // Já atualizado por updateUserInfo()
         }
         
-        function switchSubTab(subtabId) {
-            // Esconder todas as sub-abas
-            document.querySelectorAll('.admin-subtab').forEach(tab => {
-                tab.classList.remove('active');
-            });
+        function loadFlights() {
+            if (!currentUser || isAdmin) return;
             
-            // Remover active de todos os botões de sub-aba
-            document.querySelectorAll('[data-subtab]').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            const pilotFlights = flights.filter(f => f.pilotId === currentUser.id);
+            const container = document.getElementById('flightsList');
             
-            // Mostrar sub-aba selecionada
-            const element = document.getElementById('admin' + subtabId.charAt(0).toUpperCase() + subtabId.slice(1));
-            if (element) {
-                element.classList.add('active');
-            }
-            
-            // Ativar botão da sub-aba
-            const subTabBtn = document.querySelector(`[data-subtab="${subtabId}"]`);
-            if (subTabBtn) {
-                subTabBtn.classList.add('active');
-            }
-            
-            // Carregar conteúdo específico
-            if (isAdmin) {
-                switch(subtabId) {
-                    case 'pilots':
-                        loadAdminPilots();
-                        break;
-                    case 'tests':
-                        loadAdminTests();
-                        break;
-                    case 'flights':
-                        loadAdminFlights();
-                        break;
-                    case 'messages':
-                        loadAdminMessages();
-                        break;
-                }
-            }
-        }
-        
-        // ==================== SISTEMA DE PONTUAÇÃO ====================
-        function initializeScoreChart() {
-            const ctx = document.getElementById('scoreChart');
-            if (!ctx) return;
-            
-            // Destruir gráfico anterior se existir
-            if (scoreChart) {
-                scoreChart.destroy();
-            }
-            
-            const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
-            const data = [10, 25, 45, 60, 80, currentUser?.score || 0];
-            
-            scoreChart = new Chart(ctx.getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Pontuação',
-                        data: data,
-                        borderColor: '#ff9900',
-                        backgroundColor: 'rgba(255, 153, 0, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#99ccff'
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#99ccff'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#99ccff'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        function updateScoreChart() {
-            if (scoreChart && currentUser) {
-                scoreChart.data.datasets[0].data[5] = currentUser.score || 0;
-                scoreChart.update();
-            }
-        }
-        
-        // ==================== SISTEMA DE VOOS ====================
-        function updateUpcomingFlights() {
-            if (!elements.upcomingFlights || !currentUser || isAdmin) return;
-            
-            const upcoming = allFlights
-                .filter(flight => 
-                    flight.pilotId === currentUser.id && 
-                    flight.status === 'scheduled' &&
-                    new Date(flight.date) > new Date()
-                )
-                .slice(0, 3);
-            
-            if (upcoming.length === 0) {
-                elements.upcomingFlights.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #99ccff; grid-column: 1 / -1;">
-                        Nenhum voo agendado
-                    </div>
-                `;
+            if (pilotFlights.length === 0) {
+                container.innerHTML = '<div class="card">Nenhum voo agendado</div>';
                 return;
             }
             
-            elements.upcomingFlights.innerHTML = upcoming.map(flight => `
+            container.innerHTML = pilotFlights.map(flight => `
                 <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Voo ${flight.number}</div>
-                        <div class="card-badge badge-pending">AGENDADO</div>
-                    </div>
-                    <div class="card-details">
-                        <div>
-                            <span>🛫 Origem:</span>
-                            <span>${flight.origin}</span>
-                        </div>
-                        <div>
-                            <span>🛬 Destino:</span>
-                            <span>${flight.destination}</span>
-                        </div>
-                        <div>
-                            <span>📅 Data:</span>
-                            <span>${new Date(flight.date).toLocaleDateString('pt-BR')}</span>
-                        </div>
-                        <div>
-                            <span>⏰ Hora:</span>
-                            <span>${flight.time}</span>
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-primary btn-small" onclick="viewFlightDetails('${flight.id}')">
-                            📋 Detalhes
-                        </button>
-                    </div>
+                    <h4>✈️ Voo ${flight.number}</h4>
+                    <p>${flight.origin} → ${flight.destination}</p>
+                    <p>📅 ${flight.date} ${flight.time}</p>
+                    <p>Status: ${flight.status}</p>
                 </div>
             `).join('');
         }
         
-        function loadPilotFlights() {
-            if (!elements.flightsTable || !currentUser || isAdmin) return;
+        function loadTests() {
+            if (!currentUser || isAdmin) return;
             
-            const pilotFlights = allFlights.filter(flight => flight.pilotId === currentUser.id);
+            const pilotTests = Object.values(tests).filter(t => t.pilotId === currentUser.id);
+            const container = document.getElementById('testsContent');
             
-            if (pilotFlights.length === 0) {
-                elements.flightsTable.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px; color: #99ccff;">
-                            Nenhum voo encontrado
-                        </td>
-                    </tr>
+            if (pilotTests.length === 0) {
+                container.innerHTML = `
+                    <div class="card">
+                        <p>Nenhum teste atribuído</p>
+                        <button class="btn btn-primary" onclick="checkForTest()">Verificar Teste</button>
+                    </div>
                 `;
                 return;
             }
             
-            elements.flightsTable.innerHTML = pilotFlights.map(flight => `
-                <tr>
-                    <td>${flight.number}</td>
-                    <td>${flight.origin} → ${flight.destination}</td>
-                    <td>${new Date(flight.date).toLocaleDateString('pt-BR')} ${flight.time}</td>
-                    <td>${flight.aircraft}</td>
-                    <td>
-                        <span class="card-badge ${flight.status === 'completed' ? 'badge-approved' : 
-                                                flight.status === 'cancelled' ? 'badge-rejected' : 
-                                                'badge-pending'}">
-                            ${flight.status === 'completed' ? 'COMPLETO' : 
-                             flight.status === 'cancelled' ? 'CANCELADO' : 'AGENDADO'}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="btn btn-small btn-primary" onclick="viewFlightDetails('${flight.id}')">
-                            👁️ Ver
-                        </button>
-                        ${flight.status === 'scheduled' ? `
-                            <button class="btn btn-small btn-danger" onclick="cancelFlight('${flight.id}')">
-                                ❌ Cancelar
-                            </button>
-                        ` : ''}
-                    </td>
-                </tr>
+            container.innerHTML = pilotTests.map(test => `
+                <div class="card">
+                    <h4>🧪 ${test.name}</h4>
+                    <p>Status: ${test.status || 'Pendente'}</p>
+                    ${test.status === 'pending' ? `
+                        <button class="btn btn-primary" onclick="startTest('${test.id}')">Iniciar Teste</button>
+                    ` : ''}
+                </div>
             `).join('');
         }
         
-        // ==================== SISTEMA DE TESTES ====================
-        function checkForPendingTest() {
-            if (!currentUser || isAdmin || !elements.pilotTestSection) return;
-            
-            const pilotTests = Object.values(allTests).filter(test => 
-                test.pilotId === currentUser.id && 
-                !test.completed
-            );
-            
-            if (pilotTests.length > 0) {
-                currentTest = pilotTests[0];
-                elements.pilotTestSection.innerHTML = `
-                    <div style="text-align: center; padding: 30px;">
-                        <div style="font-size: 4rem; color: #ff9900; margin-bottom: 20px;">🧪</div>
-                        <h3 style="color: #ffffff; margin-bottom: 15px;">TESTE DISPONÍVEL!</h3>
-                        <p style="color: #99ccff; margin-bottom: 20px;">
-                            Você tem um teste de ${currentTest.name} para realizar.
-                        </p>
-                        <button class="btn btn-primary" onclick="startTest('${currentTest.id}')" style="margin: 10px;">
-                            🚀 INICIAR TESTE
-                        </button>
-                    </div>
-                `;
-            } else {
-                elements.pilotTestSection.innerHTML = `
-                    <div style="text-align: center; padding: 40px;">
-                        <div style="font-size: 4rem; color: #ff9900; margin-bottom: 20px;">🧪</div>
-                        <h3 style="color: #ffffff; margin-bottom: 15px;">AGUARDANDO TESTE</h3>
-                        <p style="color: #99ccff; margin-bottom: 25px;">
-                            Aguarde um administrador liberar seu teste de pilotagem.
-                        </p>
-                    </div>
-                `;
-            }
+        function checkForTest() {
+            alert("Nenhum teste disponível no momento. Aguarde atribuição do administrador.");
         }
         
-        // ==================== SISTEMA DE CHAT ====================
-        function startChatAutoRefresh() {
-            clearInterval(chatInterval);
-            chatInterval = setInterval(() => {
-                if (document.getElementById('chat')?.classList.contains('active')) {
-                    loadChatMessages();
-                }
-            }, 2000);
+        function viewLicense() {
+            alert(`CARTEIRA DE PILOTO\n\nNome: ${currentUser.name}\nID: ${currentUser.id}\nCategoria: ${currentUser.level || 'Aprendiz'}\nPontuação: ${currentUser.score || 0}`);
         }
         
-        function loadChatMessages() {
-            if (!elements.chatMessages || !currentUser) return;
-            
-            let pilotMessages;
-            if (isAdmin) {
-                pilotMessages = chatMessages;
-            } else {
-                pilotMessages = chatMessages.filter(msg => 
-                    msg.pilotId === currentUser.id || msg.toAll === true
-                );
-            }
-            
-            if (pilotMessages.length === 0) {
-                elements.chatMessages.innerHTML = `
-                    <div class="message admin">
-                        <div class="message-sender">Administração Delta</div>
-                        <div class="message-content">Olá! Bem-vindo ao sistema Delta Airlines RP.</div>
-                        <div class="message-time">${getCurrentTime()}</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            elements.chatMessages.innerHTML = pilotMessages.map(msg => {
-                const senderName = msg.sender === 'admin' ? 'Administração Delta' : 
-                                  (isAdmin ? (allPilots[msg.pilotId]?.name || 'Piloto') : currentUser.name);
-                const time = new Date(msg.timestamp).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-                
-                return `
-                    <div class="message ${msg.sender === 'admin' ? 'admin' : 'pilot'}">
-                        <div class="message-sender">${senderName}</div>
-                        <div class="message-content">${msg.content}</div>
-                        <div class="message-time">${time}</div>
-                    </div>
-                `;
-            }).join('');
-            
-            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
-        }
-        
-        function sendMessage() {
-            if (!elements.chatInput || !currentUser) return;
-            
-            const content = elements.chatInput.value.trim();
-            if (!content) return;
-            
-            const message = {
-                id: 'msg_' + Date.now(),
-                pilotId: currentUser.id,
-                sender: isAdmin ? 'admin' : 'pilot',
-                content: content,
-                timestamp: new Date().toISOString(),
-                read: false
-            };
-            
-            chatMessages.push(message);
-            elements.chatInput.value = '';
-            
-            saveData();
-            loadChatMessages();
-            
-            showNotification('Mensagem enviada', 'success');
-        }
-        
-        // ==================== SISTEMA DE CARTEIRA ====================
-        function updateLicenseInfo() {
-            if (!currentUser || isAdmin) return;
-            
-            if (elements.licenseIdShort) elements.licenseIdShort.textContent = currentUser.id;
-            if (elements.licenseName) elements.licenseName.textContent = currentUser.name;
-            if (elements.licenseFullId) elements.licenseFullId.textContent = currentUser.id;
-            if (elements.licenseCategory) elements.licenseCategory.textContent = getPilotLevel(currentUser.score || 0);
-            if (elements.licenseExpiry) elements.licenseExpiry.textContent = new Date(currentUser.licenseExpiry).toLocaleDateString('pt-BR');
-            
-            // Habilitar botão do servidor se aprovado
-            if (currentUser.status === 'approved') {
-                if (elements.serverJoinBtn) elements.serverJoinBtn.disabled = false;
-                if (elements.mainServerJoinBtn) elements.mainServerJoinBtn.disabled = false;
-                if (elements.serverStatusBadge) {
-                    elements.serverStatusBadge.textContent = 'LIBERADO';
-                    elements.serverStatusBadge.className = 'card-badge badge-approved';
-                }
-                if (elements.serverLinkContainer) elements.serverLinkContainer.style.display = 'block';
-                if (elements.serverLinkText) elements.serverLinkText.textContent = CONFIG.ROBOX_SERVER_LINK;
-            }
-        }
-        
-        // ==================== SISTEMA ADMIN ====================
+        // ==================== FUNÇÕES DO ADMIN ====================
         function showAdminLogin() {
             loginMode = 'admin';
-            showLoginModal();
-            document.getElementById('adminLoginSection').style.display = 'block';
-            document.getElementById('loginModeText').textContent = 'Modo Admin';
-            document.getElementById('loginModeIcon').textContent = '👨‍✈️';
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('adminCodeSection').style.display = 'block';
+            document.getElementById('loginMode').textContent = 'Admin';
         }
         
         function unlockAdminPanel() {
-            if (elements.adminTabBtn) {
-                elements.adminTabBtn.classList.remove('locked');
-                elements.adminTabBtn.innerHTML = '<span>👨‍✈️</span> Painel Admin';
-            }
-            if (elements.adminContent) {
-                elements.adminContent.style.display = 'block';
-            }
+            document.getElementById('adminLoginPrompt').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+            document.getElementById('adminTab').classList.remove('locked');
             loadAdminPanel();
         }
         
         function loadAdminPanel() {
             if (!isAdmin) return;
             
-            // Estatísticas
-            if (elements.adminTotalPilots) elements.adminTotalPilots.textContent = Object.keys(allPilots).length;
-            if (elements.adminPendingTests) elements.adminPendingTests.textContent = Object.values(allTests).filter(t => !t.completed).length;
-            if (elements.adminScheduledFlights) elements.adminScheduledFlights.textContent = allFlights.filter(f => f.status === 'scheduled').length;
-            if (elements.adminTestsToday) elements.adminTestsToday.textContent = Object.values(allTests).filter(t => 
-                t.completed && 
-                new Date(t.completedAt).toDateString() === new Date().toDateString()
-            ).length;
+            // Atualizar contagem de pilotos
+            document.getElementById('pilotCount').textContent = Object.keys(pilots).length;
             
-            // Carregar conteúdo das sub-abas
+            // Mostrar primeira sub-aba
+            document.getElementById('adminPilots').style.display = 'block';
             loadAdminPilots();
-            loadAdminTests();
-            loadAdminFlights();
-            loadAdminMessages();
         }
         
         function loadAdminPilots() {
-            if (!elements.adminPilotsTable) return;
+            if (!isAdmin) return;
             
-            const pilots = Object.values(allPilots);
+            const container = document.getElementById('pilotsList');
+            const pilotList = Object.values(pilots);
             
-            if (pilots.length === 0) {
-                elements.adminPilotsTable.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px; color: #99ccff;">
-                            Nenhum piloto cadastrado
-                        </td>
-                    </tr>
-                `;
+            if (pilotList.length === 0) {
+                container.innerHTML = '<div class="card">Nenhum piloto cadastrado</div>';
                 return;
             }
             
-            elements.adminPilotsTable.innerHTML = pilots.map(pilot => `
-                <tr>
-                    <td>${pilot.id}</td>
-                    <td>${pilot.name}</td>
-                    <td>
-                        <span class="card-badge ${pilot.status === 'approved' ? 'badge-approved' : 
-                                                pilot.status === 'pending' ? 'badge-pending' : 
-                                                pilot.status === 'testing' ? 'badge-testing' : 'badge-rejected'}">
-                            ${pilot.status === 'approved' ? 'APROVADO' : 
-                             pilot.status === 'pending' ? 'PENDENTE' : 
-                             pilot.status === 'testing' ? 'EM TESTE' : 'REPROVADO'}
-                        </span>
-                    </td>
-                    <td>${pilot.score || 0}</td>
-                    <td>${pilot.tests && pilot.tests.length > 0 ? 
-                         new Date(pilot.tests[pilot.tests.length - 1].date).toLocaleDateString('pt-BR') : 
-                         'Nenhum'}</td>
-                    <td>
-                        <button class="btn btn-small btn-primary" onclick="adminViewPilot('${pilot.id}')">
-                            👁️ Ver
-                        </button>
-                        <button class="btn btn-small btn-secondary" onclick="adminMessagePilot('${pilot.id}')">
-                            💬 Msg
-                        </button>
-                        <button class="btn btn-small btn-success" onclick="adminAssignTest('${pilot.id}')" ${pilot.status === 'approved' ? 'disabled' : ''}>
-                            🧪 Teste
-                        </button>
-                    </td>
-                </tr>
+            container.innerHTML = pilotList.map(pilot => `
+                <div class="card" style="margin: 10px 0;">
+                    <h4>👤 ${pilot.name}</h4>
+                    <p>ID: ${pilot.id}</p>
+                    <p>Status: ${pilot.status}</p>
+                    <p>Pontuação: ${pilot.score || 0}</p>
+                    <div style="margin-top: 10px;">
+                        <button class="btn btn-secondary" onclick="messagePilot('${pilot.id}')">Mensagem</button>
+                        <button class="btn btn-primary" onclick="assignTestToPilot('${pilot.id}')">Atribuir Teste</button>
+                    </div>
+                </div>
             `).join('');
         }
         
         function loadAdminTests() {
-            if (!elements.adminTestsList) return;
+            if (!isAdmin) return;
             
-            const tests = Object.values(allTests).filter(t => !t.pilotId); // Mostrar apenas templates
+            const container = document.getElementById('testsList');
+            const testList = Object.values(tests);
             
-            if (tests.length === 0) {
-                elements.adminTestsList.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #99ccff; grid-column: 1 / -1;">
-                        Nenhum teste disponível<br>
-                        <button class="btn btn-primary" onclick="showCreateQuestionsModal()" style="margin-top: 15px;">
-                            📝 Criar Primeiro Teste
-                        </button>
-                    </div>
-                `;
+            if (testList.length === 0) {
+                container.innerHTML = '<div class="card">Nenhum teste criado</div>';
                 return;
             }
             
-            elements.adminTestsList.innerHTML = tests.map(test => `
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">${test.name}</div>
-                        <div class="card-badge ${test.completed ? (test.passed ? 'badge-approved' : 'badge-rejected') : 'badge-pending'}">
-                            ${test.completed ? (test.passed ? 'APROVADO' : 'REPROVADO') : 'TEMPLATE'}
-                        </div>
-                    </div>
-                    <div class="card-details">
-                        <div>
-                            <span>📋 Tipo:</span>
-                            <span>${test.name}</span>
-                        </div>
-                        <div>
-                            <span>🎯 Para passar:</span>
-                            <span>${test.passingScore || '7'}/10</span>
-                        </div>
-                        <div>
-                            <span>📝 Questões:</span>
-                            <span>${test.questionsData ? test.questionsData.length : '0'}</span>
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-small btn-primary" onclick="adminViewTestDetails('${test.id}')">
-                            📋 Ver
-                        </button>
-                        <button class="btn btn-small btn-success" onclick="adminAssignTestToPilot('${test.id}')">
-                            👤 Atribuir
-                        </button>
-                    </div>
+            container.innerHTML = testList.map(test => `
+                <div class="card" style="margin: 10px 0;">
+                    <h4>🧪 ${test.name}</h4>
+                    <p>ID: ${test.id}</p>
+                    <p>Piloto: ${pilots[test.pilotId]?.name || 'Não atribuído'}</p>
+                    <p>Status: ${test.status || 'Pendente'}</p>
                 </div>
             `).join('');
         }
         
         function loadAdminFlights() {
-            if (!elements.adminFlightsList) return;
+            if (!isAdmin) return;
             
-            if (allFlights.length === 0) {
-                elements.adminFlightsList.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #99ccff; grid-column: 1 / -1;">
-                        Nenhum voo agendado<br>
-                        <button class="btn btn-primary" onclick="showScheduleFlightModal()" style="margin-top: 15px;">
-                            ✈️ Agendar Primeiro Voo
-                        </button>
-                    </div>
-                `;
+            const container = document.getElementById('flightsAdminList');
+            
+            if (flights.length === 0) {
+                container.innerHTML = '<div class="card">Nenhum voo agendado</div>';
                 return;
             }
             
-            elements.adminFlightsList.innerHTML = allFlights.map(flight => `
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Voo ${flight.number}</div>
-                        <div class="card-badge ${flight.status === 'completed' ? 'badge-approved' : 
-                                                flight.status === 'cancelled' ? 'badge-rejected' : 
-                                                'badge-pending'}">
-                            ${flight.status === 'completed' ? 'COMPLETO' : 
-                             flight.status === 'cancelled' ? 'CANCELADO' : 
-                             flight.pilotId ? 'AGENDADO' : 'DISPONÍVEL'}
-                        </div>
-                    </div>
-                    <div class="card-details">
-                        <div>
-                            <span>🛫 Rota:</span>
-                            <span>${flight.origin} → ${flight.destination}</span>
-                        </div>
-                        <div>
-                            <span>📅 Data:</span>
-                            <span>${new Date(flight.date).toLocaleDateString('pt-BR')} ${flight.time}</span>
-                        </div>
-                        <div>
-                            <span>✈️ Aeronave:</span>
-                            <span>${flight.aircraft}</span>
-                        </div>
-                        <div>
-                            <span>👨‍✈️ Piloto:</span>
-                            <span>${flight.pilotId ? allPilots[flight.pilotId]?.name : 'À designar'}</span>
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-small btn-primary" onclick="adminViewFlight('${flight.id}')">
-                            👁️ Ver
-                        </button>
-                        ${!flight.pilotId && flight.status === 'available' ? `
-                            <button class="btn btn-small btn-success" onclick="adminAssignFlight('${flight.id}')">
-                                👤 Designar
-                            </button>
-                        ` : ''}
-                        <button class="btn btn-small btn-danger" onclick="adminCancelFlight('${flight.id}')">
-                            ❌ Cancelar
-                        </button>
-                    </div>
+            container.innerHTML = flights.map(flight => `
+                <div class="card" style="margin: 10px 0;">
+                    <h4>✈️ Voo ${flight.number}</h4>
+                    <p>${flight.origin} → ${flight.destination}</p>
+                    <p>📅 ${flight.date} ${flight.time}</p>
+                    <p>Piloto: ${pilots[flight.pilotId]?.name || 'Não designado'}</p>
+                    <p>Status: ${flight.status}</p>
                 </div>
             `).join('');
         }
         
-        function loadAdminMessages() {
-            if (!elements.adminMessagesList) return;
+        function createTest() {
+            const testName = prompt("Nome do teste:");
+            if (!testName) return;
             
-            // Agrupar mensagens por piloto
-            const messagesByPilot = {};
-            chatMessages.forEach(msg => {
-                if (msg.sender === 'pilot') {
-                    if (!messagesByPilot[msg.pilotId]) {
-                        messagesByPilot[msg.pilotId] = {
-                            pilot: allPilots[msg.pilotId],
-                            messages: [],
-                            unread: 0
-                        };
-                    }
-                    messagesByPilot[msg.pilotId].messages.push(msg);
-                    if (!msg.read) messagesByPilot[msg.pilotId].unread++;
-                }
-            });
-            
-            const pilotsWithMessages = Object.values(messagesByPilot);
-            
-            if (pilotsWithMessages.length === 0) {
-                elements.adminMessagesList.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #99ccff; grid-column: 1 / -1;">
-                        Nenhuma mensagem recebida
-                    </div>
-                `;
-                return;
-            }
-            
-            elements.adminMessagesList.innerHTML = pilotsWithMessages.map(data => `
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">${data.pilot?.name || 'Piloto Desconhecido'}</div>
-                        ${data.unread > 0 ? `
-                            <div class="card-badge badge-pending">
-                                ${data.unread} NOVAS
-                            </div>
-                        ` : ''}
-                    </div>
-                    <div class="card-details">
-                        <div>
-                            <span>🆔 ID:</span>
-                            <span>${data.pilot?.id || 'N/A'}</span>
-                        </div>
-                        <div>
-                            <span>📧 E-mail:</span>
-                            <span>${data.pilot?.email || 'N/A'}</span>
-                        </div>
-                        <div>
-                            <span>💬 Total Mensagens:</span>
-                            <span>${data.messages.length}</span>
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-small btn-primary" onclick="adminChatWithPilot('${data.pilot?.id}')">
-                            💬 Responder
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // ==================== FUNÇÕES ADMIN ADICIONAIS ====================
-        function adminAssignTestToPilot(testId) {
-            const test = allTests[testId];
-            if (!test) {
-                showNotification('Teste não encontrado', 'error');
-                return;
-            }
-            
-            const pilots = Object.values(allPilots).filter(p => p.status !== 'approved');
-            
-            if (pilots.length === 0) {
-                alert('Não há pilotos pendentes para atribuir teste.');
-                return;
-            }
-            
-            let pilotsList = 'PILOTOS PENDENTES:\n\n';
-            pilots.forEach((pilot, index) => {
-                pilotsList += `${index + 1}. ${pilot.name} (${pilot.id})\n`;
-            });
-            
-            const pilotChoice = prompt(`${pilotsList}\nDigite o número do piloto para atribuir o teste "${test.name}":`);
-            if (!pilotChoice) return;
-            
-            const pilotIndex = parseInt(pilotChoice) - 1;
-            if (isNaN(pilotIndex) || pilotIndex < 0 || pilotIndex >= pilots.length) {
-                alert('Escolha inválida.');
-                return;
-            }
-            
-            const selectedPilot = pilots[pilotIndex];
-            
-            // Criar cópia do teste para o piloto
-            const newTestId = 'test_' + Date.now() + '_' + selectedPilot.id;
-            const newTest = {
-                ...test,
-                id: newTestId,
-                pilotId: selectedPilot.id,
-                assignedBy: 'admin',
-                assignedAt: new Date().toISOString(),
-                completed: false
+            const testId = "test_" + Date.now();
+            tests[testId] = {
+                id: testId,
+                name: testName,
+                status: "template"
             };
             
-            allTests[newTestId] = newTest;
-            
-            // Atualizar status do piloto
-            selectedPilot.status = 'testing';
-            allPilots[selectedPilot.id] = selectedPilot;
-            
             saveData();
-            
-            // Enviar mensagem para o piloto
-            const chatMessage = {
-                id: 'msg_' + Date.now(),
-                pilotId: selectedPilot.id,
-                sender: 'admin',
-                content: `🧪 NOVO TESTE ATRIBUÍDO!\n\nVocê recebeu um ${test.name} para realizar.\n\nAcesse a aba "Testes" para iniciar.`,
-                timestamp: new Date().toISOString(),
-                read: false
-            };
-            
-            chatMessages.push(chatMessage);
-            saveData();
-            
-            showNotification(`Teste atribuído para ${selectedPilot.name}`, 'success');
             loadAdminTests();
+            alert("Teste criado com sucesso!");
         }
         
-        function showScheduleFlightModal() {
-            const flightNumber = prompt('Número do Voo (ex: DL101):');
+        function scheduleFlight() {
+            const flightNumber = prompt("Número do voo:");
             if (!flightNumber) return;
             
-            const origin = prompt('Aeroporto de Origem (ex: SBGR - Guarulhos):');
-            if (!origin) return;
-            
-            const destination = prompt('Aeroporto de Destino (ex: KJFK - Nova York):');
-            if (!destination) return;
-            
-            const date = prompt('Data do Voo (YYYY-MM-DD):');
-            if (!date) return;
-            
-            const time = prompt('Hora do Voo (ex: 14:30):');
-            if (!time) return;
-            
-            const aircraft = prompt('Aeronave (ex: Boeing 777-300ER):');
-            if (!aircraft) return;
-            
-            // Criar voo
-            const flight = {
-                id: 'flight_' + Date.now(),
+            flights.push({
+                id: "flight_" + Date.now(),
                 number: flightNumber,
-                origin: origin,
-                destination: destination,
-                date: date + 'T00:00:00',
-                time: time,
-                aircraft: aircraft,
-                status: 'available',
-                createdAt: new Date().toISOString()
-            };
+                origin: "São Paulo",
+                destination: "Rio de Janeiro",
+                date: "2024-12-20",
+                time: "10:00",
+                status: "available"
+            });
             
-            allFlights.push(flight);
             saveData();
-            
-            showNotification(`Voo ${flightNumber} agendado com sucesso!`, 'success');
             loadAdminFlights();
+            alert("Voo agendado!");
         }
         
-        function adminAssignFlight(flightId) {
-            const flight = allFlights.find(f => f.id === flightId);
-            if (!flight) {
-                showNotification('Voo não encontrado', 'error');
+        function assignTestToPilot(pilotId) {
+            const pilot = pilots[pilotId];
+            if (!pilot) return;
+            
+            // Encontrar um teste template
+            const availableTest = Object.values(tests).find(t => t.status === "template");
+            
+            if (!availableTest) {
+                alert("Crie um teste primeiro!");
                 return;
             }
             
-            const availablePilots = Object.values(allPilots).filter(p => p.status === 'approved');
-            
-            if (availablePilots.length === 0) {
-                alert('Não há pilotos aprovados disponíveis.');
-                return;
-            }
-            
-            let pilotsList = 'PILOTOS DISPONÍVEIS:\n\n';
-            availablePilots.forEach((pilot, index) => {
-                pilotsList += `${index + 1}. ${pilot.name} (${pilot.id})\n`;
-            });
-            
-            const pilotChoice = prompt(`${pilotsList}\nDigite o número do piloto para designar ao voo ${flight.number}:`);
-            if (!pilotChoice) return;
-            
-            const pilotIndex = parseInt(pilotChoice) - 1;
-            if (isNaN(pilotIndex) || pilotIndex < 0 || pilotIndex >= availablePilots.length) {
-                alert('Escolha inválida.');
-                return;
-            }
-            
-            const selectedPilot = availablePilots[pilotIndex];
-            
-            // Designar voo
-            flight.pilotId = selectedPilot.id;
-            flight.status = 'scheduled';
-            
-            // Adicionar ao histórico do piloto
-            if (!selectedPilot.flights) selectedPilot.flights = [];
-            selectedPilot.flights.push({
-                id: flight.id,
-                number: flight.number,
-                date: flight.date,
-                status: 'scheduled'
-            });
-            
-            allPilots[selectedPilot.id] = selectedPilot;
-            saveData();
-            
-            // Notificar piloto
-            const chatMessage = {
-                id: 'msg_' + Date.now(),
-                pilotId: selectedPilot.id,
-                sender: 'admin',
-                content: `✈️ NOVO VOO AGENDADO!\n\nVocê foi designado para o Voo ${flight.number}.\n\n🛫 ${flight.origin} → ${flight.destination}\n📅 ${new Date(flight.date).toLocaleDateString('pt-BR')} ${flight.time}\n✈️ ${flight.aircraft}`,
-                timestamp: new Date().toISOString(),
-                read: false
+            // Criar cópia do teste para o piloto
+            const testId = "test_" + Date.now() + "_" + pilotId;
+            tests[testId] = {
+                ...availableTest,
+                id: testId,
+                pilotId: pilotId,
+                status: "pending"
             };
             
-            chatMessages.push(chatMessage);
-            saveData();
-            
-            showNotification(`Voo ${flight.number} designado para ${selectedPilot.name}`, 'success');
-            loadAdminFlights();
-        }
-        
-        // ==================== INICIALIZAÇÃO ====================
-        function init() {
-            // Carregar dados
-            loadData();
-            
-            // Inicializar dados de exemplo se vazio
-            if (Object.keys(allPilots).length === 0) {
-                initializeSampleData();
-            }
-            
-            // Verificar se há sessão ativa
-            if (!currentUser) {
-                showLoginModal();
-            }
-            
-            console.log('✅ Sistema Delta Airlines RP v1.1 inicializado!');
-        }
-        
-        function initializeSampleData() {
-            // Piloto de exemplo
-            allPilots['DL-001'] = {
-                id: 'DL-001',
-                name: 'João Silva',
-                email: 'joao@exemplo.com',
-                robloxUser: 'PilotJoao',
-                age: 25,
-                nationality: 'Brasileiro',
-                password: '123456',
-                score: 150,
-                level: 'Piloto Jr',
-                status: 'approved',
-                flights: [],
-                tests: [],
-                licenseExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-                createdAt: new Date().toISOString()
-            };
-            
-            // Piloto pendente
-            allPilots['DL-002'] = {
-                id: 'DL-002',
-                name: 'Maria Santos',
-                email: 'maria@exemplo.com',
-                robloxUser: 'PilotMaria',
-                age: 22,
-                nationality: 'Brasileira',
-                password: '123456',
-                score: 0,
-                level: 'Aprendiz',
-                status: 'pending',
-                flights: [],
-                tests: [],
-                licenseExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-                createdAt: new Date().toISOString()
-            };
-            
-            // Voos de exemplo
-            allFlights.push({
-                id: 'flight_1',
-                number: 'DL101',
-                origin: 'SBGR - Guarulhos',
-                destination: 'KJFK - Nova York',
-                date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-                time: '14:30',
-                aircraft: 'Boeing 777-300ER',
-                status: 'available',
-                createdAt: new Date().toISOString()
-            });
-            
-            // Teste de exemplo
-            allTests['test_template_1'] = {
-                id: 'test_template_1',
-                name: 'Teste Básico de Pilotagem',
-                questionsData: [
-                    {
-                        question: "O que fazer em caso de perda total de energia?",
-                        options: [
-                            "Manter a calma e seguir o checklist de emergência",
-                            "Pular do avião imediatamente",
-                            "Desligar todos os sistemas",
-                            "Pedir ajuda pelo rádio"
-                        ],
-                        correct: 0
-                    },
-                    {
-                        question: "Qual a altitude ideal para cruzeiro?",
-                        options: [
-                            "10.000 pés",
-                            "25.000 pés",
-                            "35.000 pés",
-                            "45.000 pés"
-                        ],
-                        correct: 2
-                    }
-                ],
-                passingScore: 7,
-                createdAt: new Date().toISOString()
-            };
-            
-            // Mensagem de boas-vindas
-            chatMessages.push({
-                id: 'msg_1',
-                pilotId: 'DL-001',
-                sender: 'admin',
-                content: 'Olá! Bem-vindo ao sistema Delta Airlines RP. Como posso ajudá-lo hoje?',
-                timestamp: new Date().toISOString(),
-                read: false
-            });
+            // Atualizar status do piloto
+            pilot.status = "testing";
+            pilots[pilotId] = pilot;
             
             saveData();
+            loadAdminPilots();
+            alert(`Teste atribuído a ${pilot.name}`);
         }
         
-        // Adicionar funções ao escopo global
-        window.showScheduleFlightModal = showScheduleFlightModal;
-        window.adminAssignTestToPilot = adminAssignTestToPilot;
-        window.adminAssignFlight = adminAssignFlight;
-        window.sendMessage = sendMessage;
-        window.logout = logout;
+        function messagePilot(pilotId) {
+            const pilot = pilots[pilotId];
+            if (!pilot) return;
+            
+            const message = prompt(`Digite a mensagem para ${pilot.name}:`);
+            if (message) {
+                alert(`Mensagem enviada para ${pilot.name}:\n\n"${message}"`);
+            }
+        }
         
         // Inicializar quando a página carregar
         document.addEventListener('DOMContentLoaded', init);
