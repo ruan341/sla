@@ -704,6 +704,15 @@
             font-size: 0.9rem;
         }
         
+        /* ESTILOS PARA AS SUB-ABAS DO ADMIN */
+        .admin-subtab {
+            display: none;
+        }
+        
+        .admin-subtab.active {
+            display: block;
+        }
+        
         /* RESPONSIVO */
         @media (max-width: 1024px) {
             .cards-grid {
@@ -762,7 +771,7 @@
 </head>
 <body>
     <!-- MODAL DE LOGIN -->
-    <div id="loginModal" class="modal">
+    <div id="loginModal" class="modal" style="display: flex;">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">🔐 LOGIN - DELTA AIRLINES RP</h2>
@@ -1785,7 +1794,7 @@
                     }
                     
                     // Se for aba testes e piloto não tem acesso, mostrar mensagem
-                    if (tabId === 'tests' && currentUser.status === 'pending') {
+                    if (tabId === 'tests' && currentUser && currentUser.status === 'pending') {
                         showNotification('Aguarde aprovação para realizar testes', 'info');
                         return;
                     }
@@ -1860,10 +1869,12 @@
             
             // Mostrar sub-aba selecionada
             const element = document.getElementById('admin' + subtabId.charAt(0).toUpperCase() + subtabId.slice(1));
-            if (element) element.classList.add('active');
+            if (element) {
+                element.classList.add('active');
+            }
             
             // Ativar botão da sub-aba
-            document.querySelector(`[data-subtab="${subtabId}"]`)?.classList.add('active');
+            document.querySelector(`[data-subtab="${subtabId}"]`).classList.add('active');
         }
         
         // ==================== SISTEMA DE PONTUAÇÃO ====================
@@ -2397,9 +2408,21 @@ ${passed ? 'Parabéns! Você está apto para voar.' : 'Estude mais e tente novam
         function loadChatMessages() {
             if (!currentUser) return;
             
+            // Filtrar mensagens do piloto atual ou mensagens para todos
             const pilotMessages = chatMessages.filter(msg => 
                 msg.pilotId === currentUser.id || msg.toAll === true
             );
+            
+            if (pilotMessages.length === 0) {
+                elements.chatMessages.innerHTML = `
+                    <div class="message admin">
+                        <div class="message-sender">Administração Delta</div>
+                        <div class="message-content">Olá! Bem-vindo ao sistema Delta Airlines RP. Como posso ajudá-lo hoje?</div>
+                        <div class="message-time">10:00</div>
+                    </div>
+                `;
+                return;
+            }
             
             elements.chatMessages.innerHTML = pilotMessages.map(msg => `
                 <div class="message ${msg.sender === 'admin' ? 'admin' : 'pilot'}">
@@ -2438,6 +2461,8 @@ ${passed ? 'Parabéns! Você está apto para voar.' : 'Estude mais e tente novam
             
             // Notificar admin (simulado)
             addAdminMessage(`Nova mensagem de ${currentUser.name}: ${content}`);
+            
+            showNotification('Mensagem enviada!');
         }
         
         function addChatMessage(sender, content) {
@@ -2662,6 +2687,17 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
         function loadAdminPilots() {
             const pilots = Object.values(allPilots);
             
+            if (pilots.length === 0) {
+                elements.adminPilotsTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #99ccff;">
+                            Nenhum piloto cadastrado
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
             elements.adminPilotsTable.innerHTML = pilots.map(pilot => `
                 <tr>
                     <td>${pilot.id}</td>
@@ -2684,7 +2720,7 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
                             👁️ Ver
                         </button>
                         <button class="btn btn-small btn-secondary" onclick="adminMessagePilot('${pilot.id}')">
-                            💬 Mensagem
+                            💬 Msg
                         </button>
                         <button class="btn btn-small btn-success" onclick="adminAssignTest('${pilot.id}')" ${pilot.status === 'approved' ? 'disabled' : ''}>
                             🧪 Teste
@@ -2696,6 +2732,15 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
         
         function loadAdminTests() {
             const tests = Object.values(allTests);
+            
+            if (tests.length === 0) {
+                elements.adminTestsList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #99ccff; grid-column: 1 / -1;">
+                        Nenhum teste atribuído
+                    </div>
+                `;
+                return;
+            }
             
             elements.adminTestsList.innerHTML = tests.map(test => `
                 <div class="card">
@@ -2741,6 +2786,15 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
         }
         
         function loadAdminFlights() {
+            if (allFlights.length === 0) {
+                elements.adminFlightsList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #99ccff; grid-column: 1 / -1;">
+                        Nenhum voo agendado
+                    </div>
+                `;
+                return;
+            }
+            
             elements.adminFlightsList.innerHTML = allFlights.map(flight => `
                 <div class="card">
                     <div class="card-header">
@@ -2998,6 +3052,7 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
         }
         
         function showAllPilots() {
+            switchTab('admin');
             switchSubTab('pilots');
         }
         
@@ -3006,15 +3061,199 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
             console.log(`📢 Mensagem para admin: ${content}`);
         }
         
+        // ==================== FUNÇÕES ADMIN ADICIONAIS ====================
+        function adminViewTestDetails(testId) {
+            const test = allTests[testId];
+            if (!test) return;
+            
+            const pilot = allPilots[test.pilotId];
+            alert(`Detalhes do Teste:
+            
+🧪 Teste: ${test.name}
+👨‍✈️ Piloto: ${pilot?.name || 'N/A'}
+📅 Atribuído: ${new Date(test.assignedAt).toLocaleDateString('pt-BR')}
+${test.completed ? `
+✅ Concluído: ${new Date(test.completedAt).toLocaleDateString('pt-BR')}
+📊 Nota: ${test.score}/${test.total} (${test.percentage?.toFixed(1)}%)
+🎯 Status: ${test.passed ? 'Aprovado' : 'Reprovado'}
+` : '⏳ Pendente'}`);
+        }
+        
+        function adminSendTestReminder(testId) {
+            const test = allTests[testId];
+            if (!test) return;
+            
+            const pilot = allPilots[test.pilotId];
+            if (!pilot) return;
+            
+            // Enviar mensagem de lembrete
+            const chatMessage = {
+                id: 'msg_' + Date.now(),
+                pilotId: test.pilotId,
+                sender: 'admin',
+                content: `⏰ LEMBRETE!\n\nVocê ainda não realizou o teste de ${test.name}.\n\nPor favor, acesse a aba "Testes" para realizá-lo.`,
+                timestamp: new Date().toISOString(),
+                read: false
+            };
+            
+            chatMessages.push(chatMessage);
+            saveData();
+            
+            showNotification(`Lembrete enviado para ${pilot.name}`, 'success');
+        }
+        
+        function adminViewFlight(flightId) {
+            const flight = allFlights.find(f => f.id === flightId);
+            if (!flight) return;
+            
+            alert(`Detalhes do Voo ${flight.number}:
+            
+🛫 Origem: ${flight.origin}
+🛬 Destino: ${flight.destination}
+📅 Data: ${new Date(flight.date).toLocaleDateString('pt-BR')}
+⏰ Hora: ${flight.time}
+✈️ Aeronave: ${flight.aircraft}
+📊 Status: ${flight.status}
+👨‍✈️ Piloto: ${flight.pilotId ? allPilots[flight.pilotId]?.name : 'À designar'}
+📝 Notas: ${flight.notes || 'Nenhuma'}`);
+        }
+        
+        function adminAssignFlight(flightId) {
+            const flight = allFlights.find(f => f.id === flightId);
+            if (!flight) return;
+            
+            // Listar pilotos disponíveis
+            const availablePilots = Object.values(allPilots).filter(p => 
+                p.status === 'approved'
+            );
+            
+            if (availablePilots.length === 0) {
+                alert('Não há pilotos aprovados disponíveis.');
+                return;
+            }
+            
+            let pilotsList = 'PILOTOS DISPONÍVEIS:\n\n';
+            availablePilots.forEach((pilot, index) => {
+                pilotsList += `${index + 1}. ${pilot.name} (${pilot.id})\n`;
+            });
+            
+            const pilotChoice = prompt(`${pilotsList}\nDigite o número do piloto para designar ao voo ${flight.number}:`);
+            if (!pilotChoice) return;
+            
+            const pilotIndex = parseInt(pilotChoice) - 1;
+            if (pilotIndex < 0 || pilotIndex >= availablePilots.length) {
+                alert('Escolha inválida.');
+                return;
+            }
+            
+            const selectedPilot = availablePilots[pilotIndex];
+            
+            // Designar voo
+            flight.pilotId = selectedPilot.id;
+            flight.status = 'scheduled';
+            
+            // Adicionar ao histórico do piloto
+            if (!selectedPilot.flights) selectedPilot.flights = [];
+            selectedPilot.flights.push({
+                id: flight.id,
+                number: flight.number,
+                date: flight.date,
+                status: 'scheduled'
+            });
+            
+            allPilots[selectedPilot.id] = selectedPilot;
+            saveData();
+            
+            // Notificar piloto
+            const chatMessage = {
+                id: 'msg_' + Date.now(),
+                pilotId: selectedPilot.id,
+                sender: 'admin',
+                content: `✈️ NOVO VOO AGENDADO!\n\nVocê foi designado para o Voo ${flight.number}.\n\n🛫 ${flight.origin} → ${flight.destination}\n📅 ${new Date(flight.date).toLocaleDateString('pt-BR')} ${flight.time}\n✈️ ${flight.aircraft}`,
+                timestamp: new Date().toISOString(),
+                read: false
+            };
+            
+            chatMessages.push(chatMessage);
+            saveData();
+            
+            showNotification(`Voo ${flight.number} designado para ${selectedPilot.name}`, 'success');
+            loadAdminFlights();
+        }
+        
+        function adminCancelFlight(flightId) {
+            if (!confirm('Tem certeza que deseja cancelar este voo?')) return;
+            
+            const flightIndex = allFlights.findIndex(f => f.id === flightId);
+            if (flightIndex !== -1) {
+                allFlights[flightIndex].status = 'cancelled';
+                allFlights[flightIndex].cancelledAt = new Date().toISOString();
+                
+                // Notificar piloto se houver
+                if (allFlights[flightIndex].pilotId) {
+                    const chatMessage = {
+                        id: 'msg_' + Date.now(),
+                        pilotId: allFlights[flightIndex].pilotId,
+                        sender: 'admin',
+                        content: `❌ VOO CANCELADO!\n\nO Voo ${allFlights[flightIndex].number} foi cancelado.`,
+                        timestamp: new Date().toISOString(),
+                        read: false
+                    };
+                    
+                    chatMessages.push(chatMessage);
+                }
+                
+                saveData();
+                loadAdminFlights();
+                showNotification('Voo cancelado com sucesso', 'info');
+            }
+        }
+        
+        function adminChatWithPilot(pilotId) {
+            const pilot = allPilots[pilotId];
+            if (!pilot) return;
+            
+            const message = prompt(`Enviar mensagem para ${pilot.name}:`);
+            if (message) {
+                const chatMessage = {
+                    id: 'msg_' + Date.now(),
+                    pilotId: pilotId,
+                    sender: 'admin',
+                    content: message,
+                    timestamp: new Date().toISOString(),
+                    read: false
+                };
+                
+                chatMessages.push(chatMessage);
+                saveData();
+                showNotification(`Mensagem enviada para ${pilot.name}`, 'success');
+            }
+        }
+        
+        function adminViewPilotMessages(pilotId) {
+            const pilot = allPilots[pilotId];
+            if (!pilot) return;
+            
+            const pilotMessages = chatMessages.filter(msg => msg.pilotId === pilotId);
+            
+            let messagesText = `MENSAGENS COM ${pilot.name.toUpperCase()}:\n\n`;
+            
+            if (pilotMessages.length === 0) {
+                messagesText += 'Nenhuma mensagem.';
+            } else {
+                pilotMessages.forEach(msg => {
+                    const time = new Date(msg.timestamp).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                    messagesText += `[${time}] ${msg.sender === 'admin' ? 'ADMIN' : 'PILOTO'}: ${msg.content}\n\n`;
+                });
+            }
+            
+            alert(messagesText);
+        }
+        
         // ==================== INICIALIZAÇÃO ====================
         function init() {
             // Inicializar abas
             initializeTabs();
-            
-            // Mostrar modal de login inicial
-            setTimeout(() => {
-                showLoginModal();
-            }, 500);
             
             // Carregar dados de exemplo se vazio
             if (Object.keys(allPilots).length === 0) {
@@ -3026,10 +3265,30 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
                     robloxUser: 'PilotJoao',
                     age: 25,
                     nationality: 'Brasileiro',
-                    password: '123456', // Senha de exemplo
+                    password: '123456',
                     score: 150,
                     level: 'Piloto Jr',
                     status: 'approved',
+                    flights: [],
+                    tests: [],
+                    licenseExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Adicionar piloto pendente de exemplo
+                allPilots['DL-002'] = {
+                    id: 'DL-002',
+                    name: 'Maria Santos',
+                    email: 'maria@exemplo.com',
+                    robloxUser: 'PilotMaria',
+                    age: 22,
+                    nationality: 'Brasileira',
+                    password: '123456',
+                    score: 0,
+                    level: 'Aprendiz',
+                    status: 'pending',
+                    flights: [],
+                    tests: [],
                     licenseExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
                     createdAt: new Date().toISOString()
                 };
@@ -3047,14 +3306,27 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
                     createdAt: new Date().toISOString()
                 });
                 
+                // Adicionar mensagem de boas-vindas
+                chatMessages.push({
+                    id: 'msg_1',
+                    pilotId: 'DL-001',
+                    sender: 'admin',
+                    content: 'Olá! Bem-vindo ao sistema Delta Airlines RP. Como posso ajudá-lo hoje?',
+                    timestamp: new Date().toISOString(),
+                    read: false
+                });
+                
                 saveData();
             }
             
             console.log('✅ Sistema Delta Airlines RP inicializado!');
             console.log('⚠️ Lembre-se de configurar:');
-            console.log('1. ADMIN_CODE no código (linha 2218)');
+            console.log('1. ADMIN_CODE (linha 2218)');
             console.log('2. WHATSAPP_GROUP_LINK (linha 2219)');
             console.log('3. ROBOX_SERVER_LINK (linha 2220)');
+            console.log('\nDados para teste:');
+            console.log('Piloto: joao@exemplo.com / 123456');
+            console.log('Admin: qualquer email + senha: DeltaAdmin2024!');
         }
         
         // Inicializar quando a página carregar
