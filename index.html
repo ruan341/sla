@@ -3,79 +3,768 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delta Airlines RP - Sistema</title>
+    <title>Delta Airlines RP - Sistema de Licenciamento</title>
     <style>
-        /* ESTILOS SIMPLIFICADOS */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: linear-gradient(135deg, #003366, #0066cc); color: white; min-height: 100vh; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
+        /* [MANTENDO TODO O CSS ORIGINAL] */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #003366, #0066cc);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
         
         /* HEADER */
-        header { background: rgba(0, 51, 102, 0.9); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 2px solid #ff9900; }
-        h1 { color: #ff9900; margin-bottom: 10px; }
+        header {
+            background: rgba(0, 51, 102, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 3px solid #ff9900;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
         
-        /* TABS */
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-btn { padding: 10px 20px; background: #0066cc; border: none; border-radius: 5px; color: white; cursor: pointer; }
-        .tab-btn.active { background: #ff9900; }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
         
-        /* CONTEÚDO */
-        .tab-content { display: none; padding: 20px; background: rgba(0, 51, 102, 0.9); border-radius: 10px; }
-        .tab-content.active { display: block; }
+        .logo-icon {
+            font-size: 3rem;
+            color: #ff9900;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(90deg, #ffffff, #ff9900);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #99ccff;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        /* STATUS BAR */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 68, 136, 0.8);
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #ff9900;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ffffff;
+        }
+        
+        .status-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ff9900;
+        }
+        
+        /* ABAS */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: rgba(0, 51, 102, 0.7);
+            padding: 10px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 153, 0, 0.2);
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px;
+            background: rgba(0, 68, 136, 0.8);
+            border: none;
+            border-radius: 10px;
+            color: #99ccff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255, 153, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ff9900, #ff6600);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 153, 0, 0.3);
+        }
+        
+        .tab-btn.locked {
+            background: rgba(153, 204, 255, 0.2);
+            color: #6699cc;
+            cursor: not-allowed;
+        }
+        
+        .tab-btn.locked:hover {
+            transform: none;
+            background: rgba(153, 204, 255, 0.2);
+        }
+        
+        /* CONTEÚDO DAS ABAS */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* PAINEL */
+        .panel {
+            background: rgba(0, 51, 102, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid #ff9900;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            margin-bottom: 30px;
+        }
+        
+        .panel-title {
+            font-size: 1.8rem;
+            color: #ff9900;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ff9900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* FORMULÁRIOS */
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #99ccff;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .form-group input, 
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 153, 0, 0.2);
+            background: rgba(0, 68, 136, 0.8);
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff9900;
+            background: rgba(255, 153, 0, 0.05);
+            box-shadow: 0 0 20px rgba(255, 153, 0, 0.2);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
         
         /* BOTÕES */
-        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
-        .btn-primary { background: #ff9900; color: white; }
-        .btn-secondary { background: #0066cc; color: white; }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ff9900, #ff6600);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 153, 0, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            background: #6699cc;
+            color: #99ccff;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: rgba(0, 102, 204, 0.8);
+            color: white;
+            border: 2px solid #0066cc;
+        }
+        
+        .btn-secondary:hover {
+            background: #0066cc;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 102, 204, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #00cc66, #00994d);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff3333, #cc0000);
+            color: white;
+        }
+        
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
         
         /* CARDS */
-        .card { background: rgba(0, 68, 136, 0.8); padding: 15px; border-radius: 10px; margin: 10px 0; }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .card {
+            background: rgba(0, 68, 136, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 5px solid #ff9900;
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 153, 0, 0.2);
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            color: #ff9900;
+        }
+        
+        .card-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .badge-pending {
+            background: rgba(255, 153, 0, 0.2);
+            color: #ff9900;
+        }
+        
+        .badge-approved {
+            background: rgba(0, 204, 102, 0.2);
+            color: #00cc66;
+        }
+        
+        .badge-rejected {
+            background: rgba(255, 51, 51, 0.2);
+            color: #ff3333;
+        }
+        
+        .badge-testing {
+            background: rgba(0, 102, 204, 0.2);
+            color: #0066cc;
+        }
+        
+        .card-details {
+            color: #99ccff;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        /* CHAT */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            background: rgba(0, 68, 136, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 153, 0, 0.2);
+        }
+        
+        .chat-header {
+            background: rgba(0, 51, 102, 0.9);
+            padding: 15px;
+            border-bottom: 2px solid #ff9900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+        }
+        
+        .message.admin {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #ff9900, #ff6600);
+            border: 1px solid rgba(255, 153, 0, 0.3);
+        }
+        
+        .message.pilot {
+            align-self: flex-start;
+            background: rgba(0, 102, 204, 0.8);
+            border: 1px solid rgba(0, 102, 204, 0.3);
+        }
+        
+        .message-sender {
+            font-size: 0.8rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+        
+        .message-content {
+            color: #ffffff;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: right;
+            margin-top: 5px;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            padding: 15px;
+            background: rgba(0, 51, 102, 0.9);
+            border-top: 2px solid rgba(255, 153, 0, 0.2);
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 153, 0, 0.2);
+            background: rgba(0, 68, 136, 0.8);
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #ff9900;
+        }
+        
+        /* TABELAS */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 153, 0, 0.2);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 68, 136, 0.8);
+        }
+        
+        th {
+            background: rgba(0, 51, 102, 0.9);
+            padding: 15px;
+            text-align: left;
+            color: #ff9900;
+            font-weight: 600;
+            border-bottom: 2px solid #ff9900;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 153, 0, 0.1);
+            color: #99ccff;
+        }
+        
+        tr:hover {
+            background: rgba(255, 153, 0, 0.05);
+        }
+        
+        /* CARTEIRA */
+        .license-card {
+            background: linear-gradient(135deg, #003366, #0066cc);
+            border-radius: 20px;
+            padding: 30px;
+            border: 5px solid #ff9900;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .license-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ff9900;
+            padding-bottom: 15px;
+        }
+        
+        .license-logo {
+            font-size: 2.5rem;
+            color: #ff9900;
+        }
+        
+        .license-title {
+            font-size: 1.5rem;
+            color: #ffffff;
+            text-align: center;
+        }
+        
+        .license-id {
+            color: #ff9900;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .license-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .license-field {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        
+        .field-label {
+            font-size: 0.8rem;
+            color: #99ccff;
+        }
+        
+        .field-value {
+            font-size: 1.1rem;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        
+        /* NOTIFICAÇÃO */
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 20px 30px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.5s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 153, 0, 0.3);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification.success {
+            background: rgba(0, 204, 102, 0.9);
+        }
+        
+        .notification.error {
+            background: rgba(255, 51, 51, 0.9);
+        }
+        
+        .notification.info {
+            background: rgba(255, 153, 0, 0.9);
+        }
         
         /* MODAL */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #003366; padding: 20px; border-radius: 10px; max-width: 500px; width: 90%; border: 2px solid #ff9900; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: rgba(0, 51, 102, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            border: 3px solid #ff9900;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ff9900;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: #ff9900;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: #ff9900;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        /* RESPONSIVO */
+        @media (max-width: 1024px) {
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                min-width: 100%;
+            }
+            
+            .status-bar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- MODAL DE LOGIN -->
     <div id="loginModal" class="modal" style="display: flex;">
         <div class="modal-content">
-            <h2 style="color: #ff9900; margin-bottom: 20px;">🔐 LOGIN</h2>
-            <div>
-                <label>E-mail ou ID:</label>
-                <input type="text" id="loginEmail" placeholder="seu@email.com" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ff9900;">
+            <div class="modal-header">
+                <h2 class="modal-title">🔐 LOGIN</h2>
+                <button class="close-modal" onclick="closeModal('loginModal')">&times;</button>
             </div>
-            <div>
-                <label>Senha:</label>
-                <input type="password" id="loginPassword" placeholder="Sua senha" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ff9900;">
+            <div class="form-container">
+                <div class="form-group">
+                    <label>📧 E-mail ou ID</label>
+                    <input type="text" id="loginEmail" placeholder="seu@email.com ou DL-001">
+                </div>
+                <div class="form-group">
+                    <label>🔑 Senha</label>
+                    <input type="password" id="loginPassword" placeholder="Sua senha">
+                </div>
+                <div class="form-group" id="adminCodeSection" style="display: none;">
+                    <label>🔐 Código Admin</label>
+                    <input type="password" id="adminCode" placeholder="Código administrativo">
+                </div>
+                <div class="form-group" style="text-align: center;">
+                    <button class="btn btn-secondary" onclick="toggleLoginMode()" style="margin-bottom: 15px;">
+                        <span id="loginModeIcon">👤</span>
+                        <span id="loginModeText">Modo Piloto</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="login()" style="width: 100%;">
+                        🚀 ENTRAR
+                    </button>
+                </div>
+                <p style="text-align: center; color: #99ccff;">
+                    Não tem conta? <a href="#" onclick="showRegister()" style="color: #ff9900;">Cadastre-se</a>
+                </p>
             </div>
-            <div id="adminCodeDiv" style="display: none;">
-                <label>Código Admin:</label>
-                <input type="password" id="adminCode" placeholder="Código admin" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ff9900;">
-            </div>
-            <button class="btn btn-secondary" onclick="toggleLoginMode()" style="margin-bottom: 10px;">
-                Modo: <span id="loginModeText">Piloto</span>
-            </button>
-            <button class="btn btn-primary" onclick="login()" style="width: 100%;">
-                ENTRAR
-            </button>
-            <p style="text-align: center; margin-top: 15px;">
-                <a href="#" onclick="showRegister()" style="color: #ff9900;">Cadastre-se</a>
-            </p>
         </div>
     </div>
-    
+
+    <!-- MODAL DE CADASTRO -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">✈️ CADASTRO</h2>
+                <button class="close-modal" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <div class="form-container">
+                <div class="form-group">
+                    <label>👤 Nome Completo</label>
+                    <input type="text" id="registerName" placeholder="Seu nome completo">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>📧 E-mail</label>
+                        <input type="email" id="registerEmail" placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>📱 WhatsApp</label>
+                        <input type="tel" id="registerWhatsApp" placeholder="(11) 99999-9999">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>🎮 Roblox User</label>
+                    <input type="text" id="registerRoblox" placeholder="Seu nome no Roblox">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>🔑 Senha</label>
+                        <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <div class="form-group">
+                        <label>🔑 Confirmar Senha</label>
+                        <input type="password" id="registerConfirmPassword" placeholder="Digite novamente">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="register()" style="width: 100%;">
+                    ✅ CADASTRAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICAÇÃO -->
+    <div id="notification" class="notification"></div>
+
     <!-- CONTEÚDO PRINCIPAL -->
     <div id="mainContent" style="display: none;">
         <div class="container">
+            <!-- HEADER -->
             <header>
-                <h1>✈️ DELTA AIRLINES RP</h1>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                <div class="logo">
+                    <div class="logo-icon">✈️</div>
                     <div>
-                        <span>👤 <strong id="userName">-</strong></span>
-                        <span style="margin-left: 20px;">🆔 <strong id="userId">-</strong></span>
+                        <h1>DELTA AIRLINES RP</h1>
+                        <p class="subtitle">Sistema de Licenciamento de Pilotos</p>
                     </div>
-                    <button class="btn btn-secondary" onclick="logout()">Sair</button>
+                </div>
+                
+                <div class="status-bar">
+                    <div class="status-item">
+                        <span>👤 Piloto:</span>
+                        <span class="status-value" id="currentPilotName">-</span>
+                    </div>
+                    <div class="status-item">
+                        <span>📊 Pontuação:</span>
+                        <span class="status-value" id="currentPilotScore">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span>🆔 ID:</span>
+                        <span class="status-value" id="currentPilotId">DL-000</span>
+                    </div>
+                    <div class="status-item">
+                        <button class="btn btn-danger" onclick="logout()">🚪 Sair</button>
+                    </div>
                 </div>
             </header>
             
@@ -84,84 +773,261 @@
                 <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
                 <button class="tab-btn" onclick="switchTab('flights')">✈️ Voos</button>
                 <button class="tab-btn" onclick="switchTab('tests')">🧪 Testes</button>
+                <button class="tab-btn" onclick="switchTab('chat')">💬 Chat</button>
                 <button class="tab-btn" onclick="switchTab('license')">📋 Carteira</button>
-                <button class="tab-btn" id="adminTab" onclick="showAdminPanel()">👨‍✈️ Admin</button>
+                <button class="tab-btn" onclick="switchTab('server')">🎮 Servidor</button>
+                <button class="tab-btn locked" id="adminTabBtn" onclick="showAdmin()">👨‍✈️ Admin</button>
             </div>
             
             <!-- DASHBOARD -->
             <div id="dashboard" class="tab-content active">
-                <h2>Bem-vindo, <span id="welcomeName">Piloto</span>!</h2>
-                <div class="card">
-                    <h3>📈 Sua Pontuação: <span id="userScore">0</span></h3>
-                    <p>Status: <span id="userStatus">Pendente</span></p>
-                    <p>Nível: <span id="userLevel">Aprendiz</span></p>
+                <div class="panel">
+                    <h2 class="panel-title">📊 DASHBOARD</h2>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Status Atual</div>
+                                <div class="card-badge badge-pending" id="statusBadge">PENDENTE</div>
+                            </div>
+                            <div class="card-details">
+                                <p>👤 <strong id="dashboardName">-</strong></p>
+                                <p>🆔 <strong id="dashboardId">-</strong></p>
+                                <p>📊 Pontuação: <strong id="dashboardScore">0</strong></p>
+                                <p>🎯 Nível: <strong id="dashboardLevel">Aprendiz</strong></p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Próximos Voos</div>
+                            </div>
+                            <div id="upcomingFlights" class="card-details">
+                                <p>Nenhum voo agendado</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Links Rápidos</div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn btn-primary btn-small" onclick="switchTab('server')">🎮 Servidor</button>
+                                <button class="btn btn-success btn-small" onclick="openWhatsApp()">📱 WhatsApp</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- VOOS -->
             <div id="flights" class="tab-content">
-                <h2>✈️ Meus Voos</h2>
-                <div id="flightsList">
-                    <div class="card">Nenhum voo agendado</div>
+                <div class="panel">
+                    <h2 class="panel-title">✈️ MEUS VOOS</h2>
+                    <div style="margin-bottom: 20px;">
+                        <button class="btn btn-primary" onclick="loadFlights()">🔄 Atualizar</button>
+                        <button class="btn btn-secondary" onclick="showAvailableFlights()">📅 Ver Disponíveis</button>
+                    </div>
+                    <div id="flightsList">
+                        <div class="card">
+                            <p style="text-align: center; color: #99ccff;">Carregando voos...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- TESTES -->
             <div id="tests" class="tab-content">
-                <h2>🧪 Testes</h2>
-                <div id="testsList">
-                    <div class="card">
-                        <p>Aguardando teste</p>
-                        <button class="btn btn-primary" onclick="checkTest()">Verificar Teste</button>
+                <div class="panel">
+                    <h2 class="panel-title">🧪 TESTES</h2>
+                    <div id="testSection">
+                        <div class="card" style="text-align: center; padding: 40px;">
+                            <div style="font-size: 4rem; margin-bottom: 20px;">🧪</div>
+                            <h3 style="margin-bottom: 15px;">AGUARDANDO TESTE</h3>
+                            <p style="color: #99ccff; margin-bottom: 25px;">
+                                Aguarde um administrador liberar seu teste.
+                            </p>
+                            <button class="btn btn-primary" onclick="checkTest()">
+                                🔍 VERIFICAR TESTE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CHAT -->
+            <div id="chat" class="tab-content">
+                <div class="panel">
+                    <h2 class="panel-title">💬 CHAT COM ADMIN</h2>
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <span>💬</span>
+                            <span>Chat com Administração</span>
+                            <span style="margin-left: auto; color: #00ff88;">🟢 Online</span>
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message admin">
+                                <div class="message-sender">Administração Delta</div>
+                                <div class="message-content">Olá! Bem-vindo ao sistema Delta Airlines RP.</div>
+                                <div class="message-time">10:00</div>
+                            </div>
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="Digite sua mensagem...">
+                            <button class="btn btn-primary" onclick="sendChatMessage()">Enviar</button>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- CARTEIRA -->
             <div id="license" class="tab-content">
-                <h2>📋 Minha Carteira</h2>
-                <div class="card">
-                    <p><strong>Nome:</strong> <span id="licenseName">-</span></p>
-                    <p><strong>ID:</strong> <span id="licenseId">-</span></p>
-                    <p><strong>Categoria:</strong> <span id="licenseCategory">-</span></p>
+                <div class="panel">
+                    <h2 class="panel-title">📋 MINHA CARTEIRA</h2>
+                    <div class="license-card">
+                        <div class="license-header">
+                            <div class="license-logo">✈️</div>
+                            <div class="license-title">DELTA AIRLINES RP</div>
+                            <div class="license-id" id="licenseId">DL-000</div>
+                        </div>
+                        <div class="license-info">
+                            <div class="license-field">
+                                <div class="field-label">Nome do Piloto</div>
+                                <div class="field-value" id="licenseName">-</div>
+                            </div>
+                            <div class="license-field">
+                                <div class="field-label">ID de Piloto</div>
+                                <div class="field-value" id="licenseFullId">DL-000</div>
+                            </div>
+                            <div class="license-field">
+                                <div class="field-label">Categoria</div>
+                                <div class="field-value" id="licenseCategory">Aprendiz</div>
+                            </div>
+                            <div class="license-field">
+                                <div class="field-label">Validade</div>
+                                <div class="field-value" id="licenseExpiry">31/12/2024</div>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 30px;">
+                            <button class="btn btn-primary" onclick="downloadLicense()">📥 BAIXAR CARTEIRA</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SERVIDOR -->
+            <div id="server" class="tab-content">
+                <div class="panel">
+                    <h2 class="panel-title">🎮 SERVIDOR ROBLOX</h2>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">🔗 Servidor Privado</div>
+                                <div class="card-badge badge-pending" id="serverStatus">AGUARDANDO</div>
+                            </div>
+                            <div class="card-details">
+                                <p>O link do servidor será disponibilizado após aprovação nos testes.</p>
+                                <div id="serverLink" style="display: none; margin-top: 15px;">
+                                    <p><strong>Link do servidor:</strong></p>
+                                    <p style="color: #ff9900;">https://www.roblox.com/share?code=delta123</p>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" id="joinServerBtn" disabled onclick="joinServer()">🎮 ENTRAR NO SERVIDOR</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">📱 Grupo WhatsApp</div>
+                            </div>
+                            <div class="card-details">
+                                <p>Participe do nosso grupo para comunicação:</p>
+                                <p style="color: #00cc66; margin-top: 10px;">
+                                    https://chat.whatsapp.com/delta123
+                                </p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn btn-success" onclick="openWhatsApp()">📱 ENTRAR NO GRUPO</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- PAINEL ADMIN -->
             <div id="adminPanel" class="tab-content">
-                <div id="adminLoginPrompt" style="text-align: center; padding: 40px;">
-                    <h2>🔐 Área Administrativa</h2>
-                    <p>Faça login como administrador</p>
-                    <button class="btn btn-primary" onclick="adminLoginPrompt()">Login Admin</button>
-                </div>
-                
-                <div id="adminContent" style="display: none;">
-                    <h2>👨‍✈️ Painel de Administração</h2>
-                    
-                    <div style="margin: 20px 0;">
-                        <button class="btn btn-primary" onclick="showAdminTab('pilots')">👥 Pilotos</button>
-                        <button class="btn btn-primary" onclick="showAdminTab('tests')">🧪 Testes</button>
-                        <button class="btn btn-primary" onclick="showAdminTab('flights')">✈️ Voos</button>
+                <div class="panel">
+                    <div id="adminLoginPrompt" style="text-align: center; padding: 50px;">
+                        <div style="font-size: 5rem; color: #ff9900; margin-bottom: 20px;">🔐</div>
+                        <h2 style="margin-bottom: 15px;">ÁREA ADMINISTRATIVA</h2>
+                        <p style="color: #99ccff; margin-bottom: 25px;">Faça login como administrador para acessar</p>
+                        <button class="btn btn-primary" onclick="adminLogin()">
+                            🔓 LOGIN COMO ADMIN
+                        </button>
                     </div>
                     
-                    <!-- LISTA DE PILOTOS -->
-                    <div id="adminPilotsTab">
-                        <h3>Pilotos Cadastrados</h3>
-                        <div id="pilotsList"></div>
-                    </div>
-                    
-                    <!-- LISTA DE TESTES -->
-                    <div id="adminTestsTab" style="display: none;">
-                        <h3>Testes</h3>
-                        <button class="btn btn-primary" onclick="createTest()">Criar Teste</button>
-                        <div id="testsAdminList"></div>
-                    </div>
-                    
-                    <!-- LISTA DE VOOS -->
-                    <div id="adminFlightsTab" style="display: none;">
-                        <h3>Voos</h3>
-                        <button class="btn btn-primary" onclick="createFlight()">Agendar Voo</button>
-                        <div id="flightsAdminList"></div>
+                    <div id="adminContent" style="display: none;">
+                        <h2 class="panel-title">👨‍✈️ PAINEL ADMIN</h2>
+                        
+                        <div class="tabs" style="margin-bottom: 20px;">
+                            <button class="tab-btn active" onclick="switchAdminTab('dashboard')">📊 Dashboard</button>
+                            <button class="tab-btn" onclick="switchAdminTab('pilots')">👥 Pilotos</button>
+                            <button class="tab-btn" onclick="switchAdminTab('tests')">🧪 Testes</button>
+                            <button class="tab-btn" onclick="switchAdminTab('flights')">✈️ Voos</button>
+                        </div>
+                        
+                        <!-- DASHBOARD ADMIN -->
+                        <div id="adminDashboard" class="admin-tab active">
+                            <div class="cards-grid">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="card-title">Estatísticas</div>
+                                    </div>
+                                    <div class="card-details">
+                                        <p>👥 Total Pilotos: <strong id="totalPilots">0</strong></p>
+                                        <p>🧪 Testes Pendentes: <strong id="pendingTests">0</strong></p>
+                                        <p>✈️ Voos Agendados: <strong id="scheduledFlights">0</strong></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="card-title">Ações Rápidas</div>
+                                    </div>
+                                    <div class="card-actions">
+                                        <button class="btn btn-primary" onclick="switchAdminTab('pilots')">👥 Gerenciar Pilotos</button>
+                                        <button class="btn btn-secondary" onclick="createFlight()">✈️ Agendar Voo</button>
+                                        <button class="btn btn-success" onclick="createTest()">🧪 Criar Teste</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- GERENCIAR PILOTOS -->
+                        <div id="adminPilotsTab" class="admin-tab" style="display: none;">
+                            <h3 style="color: #ff9900; margin-bottom: 15px;">Todos os Pilotos</h3>
+                            <div id="adminPilotsList">
+                                <!-- Lista de pilotos será carregada aqui -->
+                            </div>
+                        </div>
+                        
+                        <!-- GERENCIAR TESTES -->
+                        <div id="adminTestsTab" class="admin-tab" style="display: none;">
+                            <h3 style="color: #ff9900; margin-bottom: 15px;">Gerenciar Testes</h3>
+                            <button class="btn btn-primary" onclick="createTest()" style="margin-bottom: 20px;">➕ Criar Novo Teste</button>
+                            <div id="adminTestsList">
+                                <!-- Lista de testes será carregada aqui -->
+                            </div>
+                        </div>
+                        
+                        <!-- GERENCIAR VOOS -->
+                        <div id="adminFlightsTab" class="admin-tab" style="display: none;">
+                            <h3 style="color: #ff9900; margin-bottom: 15px;">Gerenciar Voos</h3>
+                            <button class="btn btn-primary" onclick="createFlight()" style="margin-bottom: 20px;">➕ Agendar Novo Voo</button>
+                            <div id="adminFlightsList">
+                                <!-- Lista de voos será carregada aqui -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -169,71 +1035,58 @@
     </div>
 
     <script>
-        // ==================== SISTEMA SIMPLES ====================
-        
-        // CONFIGURAÇÃO
+        // ==================== CONFIGURAÇÃO ====================
         const CONFIG = {
-            ADMIN_CODE: "admin123",
-            STORAGE_KEY: "delta_system"
+            ADMIN_CODE: "DeltaAdmin2024!",
+            STORAGE_KEY: "delta_airlines_system",
+            WHATSAPP_LINK: "https://chat.whatsapp.com/IGETya2bgepDxqirxXwFPQ",
+            ROBLOX_LINK: "https://www.roblox.com/share?code=d05a3163e2a0794480d4f23e122c1504",
+            VERSION: "2.0"
         };
         
-        // VARIÁVEIS GLOBAIS
+        // ==================== SISTEMA DE DADOS ====================
         let currentUser = null;
         let isAdmin = false;
         let pilots = {};
         let flights = [];
         let tests = {};
+        let chatMessages = [];
         
-        // ==================== INICIALIZAÇÃO ====================
-        function init() {
-            console.log("Iniciando sistema...");
-            
-            // Carregar dados
-            loadData();
-            
-            // Verificar sessão
-            const session = localStorage.getItem(CONFIG.STORAGE_KEY + "_session");
-            if (session) {
-                try {
-                    const data = JSON.parse(session);
-                    if (data.expires > Date.now()) {
-                        autoLogin(data);
-                    }
-                } catch(e) {
-                    console.log("Sessão inválida");
-                }
-            }
-            
-            // Se não logado, mostrar login
-            if (!currentUser) {
-                showLogin();
-            }
-        }
-        
+        // Carregar dados do localStorage
         function loadData() {
             try {
-                // Carregar pilotos
                 const pilotsData = localStorage.getItem(CONFIG.STORAGE_KEY + "_pilots");
-                if (pilotsData) {
-                    pilots = JSON.parse(pilotsData);
-                } else {
-                    // Criar dados de exemplo
+                const flightsData = localStorage.getItem(CONFIG.STORAGE_KEY + "_flights");
+                const testsData = localStorage.getItem(CONFIG.STORAGE_KEY + "_tests");
+                const chatData = localStorage.getItem(CONFIG.STORAGE_KEY + "_chat");
+                const sessionData = localStorage.getItem(CONFIG.STORAGE_KEY + "_session");
+                
+                pilots = pilotsData ? JSON.parse(pilotsData) : {};
+                flights = flightsData ? JSON.parse(flightsData) : [];
+                tests = testsData ? JSON.parse(testsData) : {};
+                chatMessages = chatData ? JSON.parse(chatData) : [];
+                
+                // Criar dados de exemplo se vazio
+                if (Object.keys(pilots).length === 0) {
                     createSampleData();
                 }
                 
-                // Carregar voos
-                const flightsData = localStorage.getItem(CONFIG.STORAGE_KEY + "_flights");
-                if (flightsData) {
-                    flights = JSON.parse(flightsData);
+                // Restaurar sessão
+                if (sessionData) {
+                    const session = JSON.parse(sessionData);
+                    if (session.expires > Date.now()) {
+                        if (session.isAdmin) {
+                            loginAsAdmin(session.email);
+                        } else {
+                            const pilot = pilots[session.userId];
+                            if (pilot) {
+                                loginAsPilot(pilot);
+                            }
+                        }
+                    }
                 }
-                
-                // Carregar testes
-                const testsData = localStorage.getItem(CONFIG.STORAGE_KEY + "_tests");
-                if (testsData) {
-                    tests = JSON.parse(testsData);
-                }
-            } catch(e) {
-                console.error("Erro ao carregar dados:", e);
+            } catch (error) {
+                console.error("Erro ao carregar dados:", error);
                 resetData();
             }
         }
@@ -243,54 +1096,102 @@
                 localStorage.setItem(CONFIG.STORAGE_KEY + "_pilots", JSON.stringify(pilots));
                 localStorage.setItem(CONFIG.STORAGE_KEY + "_flights", JSON.stringify(flights));
                 localStorage.setItem(CONFIG.STORAGE_KEY + "_tests", JSON.stringify(tests));
-            } catch(e) {
-                console.error("Erro ao salvar:", e);
+                localStorage.setItem(CONFIG.STORAGE_KEY + "_chat", JSON.stringify(chatMessages));
+            } catch (error) {
+                console.error("Erro ao salvar dados:", error);
             }
         }
         
+        function saveSession() {
+            if (!currentUser) return;
+            
+            const session = {
+                userId: currentUser.id,
+                email: currentUser.email,
+                password: currentUser.password,
+                isAdmin: isAdmin,
+                expires: Date.now() + (7 * 24 * 60 * 60 * 1000)
+            };
+            
+            localStorage.setItem(CONFIG.STORAGE_KEY + "_session", JSON.stringify(session));
+        }
+        
         function createSampleData() {
-            // Piloto de exemplo
-            pilots["DL-001"] = {
-                id: "DL-001",
-                name: "João Silva",
-                email: "joao@exemplo.com",
-                password: "123456",
-                score: 100,
-                status: "approved",
-                level: "Piloto Jr"
+            // Pilotos de exemplo
+            pilots = {
+                "DL-001": {
+                    id: "DL-001",
+                    name: "João Silva",
+                    email: "joao@exemplo.com",
+                    whatsapp: "(11) 99999-9999",
+                    roblox: "PilotJoao",
+                    password: "123456",
+                    score: 150,
+                    level: "Piloto Jr",
+                    status: "approved",
+                    licenseExpiry: "2024-12-31"
+                },
+                "DL-002": {
+                    id: "DL-002",
+                    name: "Maria Santos",
+                    email: "maria@exemplo.com",
+                    whatsapp: "(11) 98888-8888",
+                    roblox: "PilotMaria",
+                    password: "123456",
+                    score: 0,
+                    level: "Aprendiz",
+                    status: "pending",
+                    licenseExpiry: "2024-12-31"
+                }
             };
             
-            // Outro piloto
-            pilots["DL-002"] = {
-                id: "DL-002",
-                name: "Maria Santos",
-                email: "maria@exemplo.com",
-                password: "123456",
-                score: 0,
-                status: "pending",
-                level: "Aprendiz"
+            // Voos de exemplo
+            flights = [
+                {
+                    id: "1",
+                    number: "DL101",
+                    origin: "SBGR - Guarulhos",
+                    destination: "KJFK - Nova York",
+                    date: "2024-12-15",
+                    time: "14:30",
+                    aircraft: "Boeing 777",
+                    pilotId: "DL-001",
+                    status: "scheduled"
+                },
+                {
+                    id: "2",
+                    number: "DL202",
+                    origin: "SBSP - Congonhas",
+                    destination: "SBGL - Galeão",
+                    date: "2024-12-20",
+                    time: "09:00",
+                    aircraft: "Airbus A320",
+                    pilotId: null,
+                    status: "available"
+                }
+            ];
+            
+            // Testes de exemplo
+            tests = {
+                "1": {
+                    id: "1",
+                    name: "Teste Básico",
+                    questions: 10,
+                    passingScore: 7,
+                    status: "template"
+                }
             };
             
-            // Voo de exemplo
-            flights.push({
-                id: "flight1",
-                number: "DL101",
-                origin: "São Paulo",
-                destination: "Rio de Janeiro",
-                date: "2024-12-15",
-                time: "14:30",
-                pilotId: "DL-001",
-                status: "scheduled"
-            });
-            
-            // Teste de exemplo
-            tests["test1"] = {
-                id: "test1",
-                name: "Teste Básico",
-                questions: 10,
-                passingScore: 7,
-                status: "template"
-            };
+            // Chat de exemplo
+            chatMessages = [
+                {
+                    id: "1",
+                    sender: "admin",
+                    pilotId: "DL-001",
+                    message: "Olá! Bem-vindo ao sistema Delta Airlines RP.",
+                    time: "10:00"
+                }
+            ];
             
             saveData();
         }
@@ -299,20 +1200,18 @@
             pilots = {};
             flights = [];
             tests = {};
+            chatMessages = [];
             createSampleData();
         }
         
         // ==================== SISTEMA DE LOGIN ====================
         let loginMode = 'pilot';
         
-        function showLogin() {
-            document.getElementById('loginModal').style.display = 'flex';
-        }
-        
         function toggleLoginMode() {
             loginMode = loginMode === 'pilot' ? 'admin' : 'pilot';
-            document.getElementById('loginModeText').textContent = loginMode === 'admin' ? 'Admin' : 'Piloto';
-            document.getElementById('adminCodeDiv').style.display = loginMode === 'admin' ? 'block' : 'none';
+            document.getElementById('loginModeText').textContent = loginMode === 'admin' ? 'Modo Admin' : 'Modo Piloto';
+            document.getElementById('loginModeIcon').textContent = loginMode === 'admin' ? '👨‍✈️' : '👤';
+            document.getElementById('adminCodeSection').style.display = loginMode === 'admin' ? 'block' : 'none';
         }
         
         function login() {
@@ -320,117 +1219,62 @@
             const password = document.getElementById('loginPassword').value.trim();
             
             if (!email || !password) {
-                alert("Preencha todos os campos!");
+                showNotification('Preencha todos os campos', 'error');
                 return;
             }
             
             if (loginMode === 'admin') {
                 const adminCode = document.getElementById('adminCode').value.trim();
                 if (adminCode !== CONFIG.ADMIN_CODE) {
-                    alert("Código administrativo incorreto!");
+                    showNotification('Código administrativo incorreto', 'error');
                     return;
                 }
                 
-                // Login como admin
-                currentUser = {
-                    id: "ADMIN",
-                    name: "Administrador",
-                    email: email,
-                    isAdmin: true
-                };
-                isAdmin = true;
-                
-                saveSession();
-                showMain();
-                unlockAdmin();
-                
-                alert("✅ Login administrativo realizado!");
-                
+                loginAsAdmin(email);
             } else {
-                // Login como piloto
-                let foundPilot = null;
+                // Buscar piloto
+                let pilotFound = null;
                 
-                // Buscar piloto por email ou ID
                 for (const id in pilots) {
                     const pilot = pilots[id];
                     if ((pilot.email === email || pilot.id === email) && pilot.password === password) {
-                        foundPilot = pilot;
+                        pilotFound = pilot;
                         break;
                     }
                 }
                 
-                if (foundPilot) {
-                    currentUser = foundPilot;
-                    isAdmin = false;
-                    
-                    saveSession();
-                    showMain();
-                    
-                    alert(`✅ Bem-vindo, ${foundPilot.name}!`);
+                if (pilotFound) {
+                    loginAsPilot(pilotFound);
                 } else {
-                    alert("❌ Email/senha incorretos!");
+                    showNotification('Email/senha incorretos', 'error');
                 }
             }
         }
         
-        function autoLogin(sessionData) {
-            if (sessionData.isAdmin) {
-                currentUser = {
-                    id: "ADMIN",
-                    name: "Administrador",
-                    email: sessionData.email,
-                    isAdmin: true
-                };
-                isAdmin = true;
-                showMain();
-                unlockAdmin();
-            } else {
-                const pilot = pilots[sessionData.userId];
-                if (pilot && pilot.password === sessionData.password) {
-                    currentUser = pilot;
-                    isAdmin = false;
-                    showMain();
-                }
-            }
-        }
-        
-        function saveSession() {
-            const session = {
-                userId: currentUser.id,
-                email: currentUser.email,
-                password: currentUser.password,
-                isAdmin: isAdmin,
-                expires: Date.now() + (7 * 24 * 60 * 60 * 1000)
+        function loginAsAdmin(email) {
+            currentUser = {
+                id: "ADMIN",
+                name: "Administrador Delta",
+                email: email,
+                password: CONFIG.ADMIN_CODE,
+                isAdmin: true
             };
-            localStorage.setItem(CONFIG.STORAGE_KEY + "_session", JSON.stringify(session));
+            isAdmin = true;
+            
+            saveSession();
+            showMain();
+            unlockAdmin();
+            showNotification('✅ Login administrativo realizado!', 'success');
         }
         
-        function showMain() {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
+        function loginAsPilot(pilot) {
+            currentUser = pilot;
+            isAdmin = false;
             
-            // Atualizar informações
-            updateUserInfo();
-            
-            // Mostrar dashboard inicialmente
-            switchTab('dashboard');
-        }
-        
-        function updateUserInfo() {
-            if (!currentUser) return;
-            
-            // Atualizar header
-            document.getElementById('userName').textContent = currentUser.name;
-            document.getElementById('userId').textContent = currentUser.id;
-            document.getElementById('welcomeName').textContent = currentUser.name;
-            document.getElementById('userScore').textContent = currentUser.score || 0;
-            document.getElementById('userStatus').textContent = currentUser.status || "Pendente";
-            document.getElementById('userLevel').textContent = currentUser.level || "Aprendiz";
-            
-            // Atualizar carteira
-            document.getElementById('licenseName').textContent = currentUser.name;
-            document.getElementById('licenseId').textContent = currentUser.id;
-            document.getElementById('licenseCategory').textContent = currentUser.level || "Aprendiz";
+            saveSession();
+            showMain();
+            updateDashboard();
+            showNotification(`✅ Bem-vindo, ${pilot.name}!`, 'success');
         }
         
         function logout() {
@@ -438,41 +1282,125 @@
             isAdmin = false;
             localStorage.removeItem(CONFIG.STORAGE_KEY + "_session");
             document.getElementById('mainContent').style.display = 'none';
-            showLogin();
-            alert("👋 Logout realizado!");
+            document.getElementById('loginModal').style.display = 'flex';
+            showNotification('👋 Logout realizado', 'info');
+        }
+        
+        // ==================== INTERFACE ====================
+        function showMain() {
+            closeModal('loginModal');
+            document.getElementById('mainContent').style.display = 'block';
+            
+            // Atualizar informações do usuário
+            updateUserInfo();
+            
+            // Inicializar abas
+            initTabs();
+        }
+        
+        function updateUserInfo() {
+            if (!currentUser) return;
+            
+            document.getElementById('currentPilotName').textContent = currentUser.name;
+            document.getElementById('currentPilotScore').textContent = currentUser.score || 0;
+            document.getElementById('currentPilotId').textContent = currentUser.id;
+            
+            document.getElementById('dashboardName').textContent = currentUser.name;
+            document.getElementById('dashboardId').textContent = currentUser.id;
+            document.getElementById('dashboardScore').textContent = currentUser.score || 0;
+            document.getElementById('dashboardLevel').textContent = currentUser.level || 'Aprendiz';
+            
+            document.getElementById('licenseName').textContent = currentUser.name;
+            document.getElementById('licenseId').textContent = currentUser.id;
+            document.getElementById('licenseFullId').textContent = currentUser.id;
+            document.getElementById('licenseCategory').textContent = currentUser.level || 'Aprendiz';
+            document.getElementById('licenseExpiry').textContent = currentUser.licenseExpiry || '31/12/2024';
+            
+            // Status badge
+            const status = currentUser.status || 'pending';
+            const badge = document.getElementById('statusBadge');
+            badge.textContent = status === 'approved' ? 'APROVADO' : 
+                               status === 'pending' ? 'PENDENTE' : 
+                               status === 'testing' ? 'EM TESTE' : 'REPROVADO';
+            badge.className = status === 'approved' ? 'card-badge badge-approved' :
+                            status === 'pending' ? 'card-badge badge-pending' :
+                            status === 'testing' ? 'card-badge badge-testing' : 'card-badge badge-rejected';
+        }
+        
+        function updateDashboard() {
+            if (!currentUser || isAdmin) return;
+            
+            // Carregar próximos voos
+            loadUpcomingFlights();
+            
+            // Verificar servidor
+            updateServerStatus();
+            
+            // Carregar chat
+            loadChat();
         }
         
         // ==================== SISTEMA DE ABAS ====================
+        function initTabs() {
+            // Configurar clique nas abas
+            document.querySelectorAll('.tab-btn:not(.locked)').forEach(btn => {
+                btn.onclick = function() {
+                    const tabId = this.textContent.includes('Dashboard') ? 'dashboard' :
+                                 this.textContent.includes('Voos') ? 'flights' :
+                                 this.textContent.includes('Testes') ? 'tests' :
+                                 this.textContent.includes('Chat') ? 'chat' :
+                                 this.textContent.includes('Carteira') ? 'license' :
+                                 this.textContent.includes('Servidor') ? 'server' : 'dashboard';
+                    
+                    switchTab(tabId);
+                };
+            });
+        }
+        
         function switchTab(tabId) {
             // Esconder todas as abas
             document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.style.display = 'none';
+                tab.classList.remove('active');
             });
             
-            // Remover active de todos os botões
+            // Remover active dos botões
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             
             // Mostrar aba selecionada
-            document.getElementById(tabId).style.display = 'block';
+            document.getElementById(tabId).classList.add('active');
             
-            // Ativar botão
-            const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => 
-                btn.textContent.includes(tabId === 'dashboard' ? 'Dashboard' : 
-                                       tabId === 'flights' ? 'Voos' : 
-                                       tabId === 'tests' ? 'Testes' : 
-                                       tabId === 'license' ? 'Carteira' : '')
-            );
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-            }
+            // Ativar botão (encontrar pelo texto)
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                if (btn.textContent.includes(tabId === 'dashboard' ? 'Dashboard' :
+                                            tabId === 'flights' ? 'Voos' :
+                                            tabId === 'tests' ? 'Testes' :
+                                            tabId === 'chat' ? 'Chat' :
+                                            tabId === 'license' ? 'Carteira' :
+                                            tabId === 'server' ? 'Servidor' : '')) {
+                    btn.classList.add('active');
+                }
+            });
             
-            // Carregar conteúdo
-            if (tabId === 'flights') {
-                loadFlights();
-            } else if (tabId === 'tests') {
-                loadTests();
+            // Carregar conteúdo específico
+            switch(tabId) {
+                case 'dashboard':
+                    updateDashboard();
+                    break;
+                case 'flights':
+                    loadFlights();
+                    break;
+                case 'tests':
+                    loadTests();
+                    break;
+                case 'chat':
+                    loadChat();
+                    break;
+                case 'server':
+                    updateServerStatus();
+                    break;
             }
         }
         
@@ -484,31 +1412,65 @@
             const pilotFlights = flights.filter(f => f.pilotId === currentUser.id);
             
             if (pilotFlights.length === 0) {
-                container.innerHTML = '<div class="card">Nenhum voo agendado</div>';
+                container.innerHTML = `
+                    <div class="card">
+                        <p style="text-align: center; color: #99ccff;">Nenhum voo encontrado</p>
+                    </div>
+                `;
                 return;
             }
             
             container.innerHTML = pilotFlights.map(flight => `
                 <div class="card">
-                    <h4>✈️ Voo ${flight.number}</h4>
-                    <p>${flight.origin} → ${flight.destination}</p>
-                    <p>📅 ${flight.date} ${flight.time}</p>
-                    <p>Status: ${flight.status}</p>
+                    <div class="card-header">
+                        <div class="card-title">Voo ${flight.number}</div>
+                        <div class="card-badge ${flight.status === 'scheduled' ? 'badge-pending' : 'badge-approved'}">
+                            ${flight.status === 'scheduled' ? 'AGENDADO' : 'COMPLETO'}
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        <p>🛫 ${flight.origin}</p>
+                        <p>🛬 ${flight.destination}</p>
+                        <p>📅 ${flight.date} ${flight.time}</p>
+                        <p>✈️ ${flight.aircraft}</p>
+                    </div>
                 </div>
+            `).join('');
+        }
+        
+        function loadUpcomingFlights() {
+            if (!currentUser || isAdmin) return;
+            
+            const container = document.getElementById('upcomingFlights');
+            const upcoming = flights.filter(f => f.pilotId === currentUser.id && f.status === 'scheduled');
+            
+            if (upcoming.length === 0) {
+                container.innerHTML = '<p>Nenhum voo agendado</p>';
+                return;
+            }
+            
+            container.innerHTML = upcoming.slice(0, 2).map(flight => `
+                <p>✈️ ${flight.number}: ${flight.origin} → ${flight.destination}</p>
             `).join('');
         }
         
         function loadTests() {
             if (!currentUser || isAdmin) return;
             
-            const container = document.getElementById('testsList');
-            const pilotTests = Object.values(tests).filter(t => t.pilotId === currentUser.id);
+            const container = document.getElementById('testSection');
+            const pilotTests = Object.values(tests).filter(t => t.pilotId === currentUser.id && t.status === 'pending');
             
             if (pilotTests.length === 0) {
                 container.innerHTML = `
-                    <div class="card">
-                        <p>Aguardando teste ser atribuído</p>
-                        <button class="btn btn-primary" onclick="checkTest()">Verificar Teste</button>
+                    <div class="card" style="text-align: center; padding: 40px;">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">🧪</div>
+                        <h3 style="margin-bottom: 15px;">AGUARDANDO TESTE</h3>
+                        <p style="color: #99ccff; margin-bottom: 25px;">
+                            Aguarde um administrador liberar seu teste.
+                        </p>
+                        <button class="btn btn-primary" onclick="checkTest()">
+                            🔍 VERIFICAR TESTE
+                        </button>
                     </div>
                 `;
                 return;
@@ -516,91 +1478,118 @@
             
             container.innerHTML = pilotTests.map(test => `
                 <div class="card">
-                    <h4>🧪 ${test.name}</h4>
-                    <p>Status: ${test.status}</p>
-                    ${test.status === 'pending' ? `
-                        <button class="btn btn-primary" onclick="startTest('${test.id}')">Iniciar Teste</button>
-                    ` : ''}
+                    <div class="card-header">
+                        <div class="card-title">${test.name}</div>
+                        <div class="card-badge badge-testing">DISPONÍVEL</div>
+                    </div>
+                    <div class="card-details">
+                        <p>📝 ${test.questions || 10} questões</p>
+                        <p>🎯 Aprovação: ${test.passingScore || 7}/10</p>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-primary" onclick="startTest('${test.id}')">🚀 INICIAR TESTE</button>
+                    </div>
                 </div>
             `).join('');
         }
         
-        function checkTest() {
-            alert("Nenhum teste disponível no momento. Aguarde atribuição do administrador.");
-        }
-        
-        // ==================== SISTEMA ADMIN ====================
-        function adminLoginPrompt() {
-            loginMode = 'admin';
-            document.getElementById('loginModal').style.display = 'flex';
-            document.getElementById('adminCodeDiv').style.display = 'block';
-            document.getElementById('loginModeText').textContent = 'Admin';
-        }
-        
-        function showAdminPanel() {
-            if (!isAdmin) {
-                adminLoginPrompt();
+        function loadChat() {
+            const container = document.getElementById('chatMessages');
+            const userMessages = chatMessages.filter(msg => 
+                isAdmin || msg.pilotId === currentUser.id || msg.sender === 'admin'
+            );
+            
+            if (userMessages.length === 0) {
+                container.innerHTML = `
+                    <div class="message admin">
+                        <div class="message-sender">Administração Delta</div>
+                        <div class="message-content">Olá! Como posso ajudá-lo?</div>
+                        <div class="message-time">${getCurrentTime()}</div>
+                    </div>
+                `;
                 return;
             }
             
-            // Esconder outras abas
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.style.display = 'none';
-            });
+            container.innerHTML = userMessages.map(msg => `
+                <div class="message ${msg.sender === 'admin' ? 'admin' : 'pilot'}">
+                    <div class="message-sender">${msg.sender === 'admin' ? 'Administração Delta' : currentUser.name}</div>
+                    <div class="message-content">${msg.message}</div>
+                    <div class="message-time">${msg.time || getCurrentTime()}</div>
+                </div>
+            `).join('');
             
-            // Remover active de todos os botões
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Mostrar painel admin
-            document.getElementById('adminPanel').style.display = 'block';
-            document.getElementById('adminTab').classList.add('active');
-            
-            // Carregar conteúdo admin
-            loadAdminContent();
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // ==================== SISTEMA ADMIN ====================
+        function showAdmin() {
+            if (isAdmin) {
+                switchTab('adminPanel');
+                loadAdminPanel();
+            } else {
+                adminLogin();
+            }
+        }
+        
+        function adminLogin() {
+            loginMode = 'admin';
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('adminCodeSection').style.display = 'block';
+            document.getElementById('loginModeText').textContent = 'Modo Admin';
+            document.getElementById('loginModeIcon').textContent = '👨‍✈️';
         }
         
         function unlockAdmin() {
+            document.getElementById('adminTabBtn').classList.remove('locked');
             document.getElementById('adminLoginPrompt').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
-            
-            // Carregar dados admin
-            loadAdminContent();
+            loadAdminPanel();
         }
         
-        function loadAdminContent() {
+        function loadAdminPanel() {
             if (!isAdmin) return;
             
-            // Mostrar abas do admin
-            showAdminTab('pilots');
+            // Estatísticas
+            document.getElementById('totalPilots').textContent = Object.keys(pilots).length;
+            document.getElementById('pendingTests').textContent = Object.values(tests).filter(t => t.status === 'pending').length;
+            document.getElementById('scheduledFlights').textContent = flights.filter(f => f.status === 'scheduled').length;
+            
+            // Mostrar dashboard inicial
+            switchAdminTab('dashboard');
         }
         
-        function showAdminTab(tabId) {
-            if (!isAdmin) return;
-            
+        function switchAdminTab(tabId) {
             // Esconder todas as abas do admin
-            document.getElementById('adminPilotsTab').style.display = 'none';
-            document.getElementById('adminTestsTab').style.display = 'none';
-            document.getElementById('adminFlightsTab').style.display = 'none';
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Remover active dos botões
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
             
             // Mostrar aba selecionada
-            document.getElementById('admin' + tabId.charAt(0).toUpperCase() + tabId.slice(1) + 'Tab').style.display = 'block';
+            document.getElementById(tabId + 'Tab').style.display = 'block';
             
             // Carregar conteúdo
-            if (tabId === 'pilots') {
-                loadAdminPilots();
-            } else if (tabId === 'tests') {
-                loadAdminTests();
-            } else if (tabId === 'flights') {
-                loadAdminFlights();
+            switch(tabId) {
+                case 'pilots':
+                    loadAdminPilots();
+                    break;
+                case 'tests':
+                    loadAdminTests();
+                    break;
+                case 'flights':
+                    loadAdminFlights();
+                    break;
             }
         }
         
         function loadAdminPilots() {
             if (!isAdmin) return;
             
-            const container = document.getElementById('pilotsList');
+            const container = document.getElementById('adminPilotsList');
             const pilotList = Object.values(pilots);
             
             if (pilotList.length === 0) {
@@ -609,16 +1598,27 @@
             }
             
             container.innerHTML = pilotList.map(pilot => `
-                <div class="card" style="margin-bottom: 10px;">
-                    <h4>👤 ${pilot.name}</h4>
-                    <p>ID: ${pilot.id}</p>
-                    <p>Status: ${pilot.status}</p>
-                    <p>Pontuação: ${pilot.score || 0}</p>
-                    <div style="margin-top: 10px;">
-                        <button class="btn btn-small btn-primary" onclick="viewPilot('${pilot.id}')">Ver</button>
-                        <button class="btn btn-small btn-secondary" onclick="messagePilot('${pilot.id}')">Mensagem</button>
+                <div class="card" style="margin-bottom: 15px;">
+                    <div class="card-header">
+                        <div class="card-title">${pilot.name}</div>
+                        <div class="card-badge ${pilot.status === 'approved' ? 'badge-approved' : 
+                                                pilot.status === 'pending' ? 'badge-pending' : 
+                                                'badge-testing'}">
+                            ${pilot.status === 'approved' ? 'APROVADO' : 
+                             pilot.status === 'pending' ? 'PENDENTE' : 'EM TESTE'}
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        <p>🆔 ${pilot.id}</p>
+                        <p>📧 ${pilot.email}</p>
+                        <p>📊 Pontuação: ${pilot.score || 0}</p>
+                        <p>🎮 Roblox: ${pilot.roblox || 'N/A'}</p>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-small btn-primary" onclick="viewPilot('${pilot.id}')">👁️ Ver</button>
+                        <button class="btn btn-small btn-secondary" onclick="messagePilot('${pilot.id}')">💬 Msg</button>
                         ${pilot.status !== 'approved' ? `
-                            <button class="btn btn-small btn-success" onclick="assignTest('${pilot.id}')">Atribuir Teste</button>
+                            <button class="btn btn-small btn-success" onclick="assignTest('${pilot.id}')">🧪 Teste</button>
                         ` : ''}
                     </div>
                 </div>
@@ -628,7 +1628,7 @@
         function loadAdminTests() {
             if (!isAdmin) return;
             
-            const container = document.getElementById('testsAdminList');
+            const container = document.getElementById('adminTestsList');
             const testList = Object.values(tests);
             
             if (testList.length === 0) {
@@ -637,11 +1637,27 @@
             }
             
             container.innerHTML = testList.map(test => `
-                <div class="card" style="margin-bottom: 10px;">
-                    <h4>🧪 ${test.name}</h4>
-                    <p>ID: ${test.id}</p>
-                    <p>Status: ${test.status}</p>
-                    ${test.pilotId ? `<p>Piloto: ${pilots[test.pilotId]?.name || 'N/A'}</p>` : ''}
+                <div class="card" style="margin-bottom: 15px;">
+                    <div class="card-header">
+                        <div class="card-title">${test.name}</div>
+                        <div class="card-badge ${test.status === 'template' ? 'badge-pending' : 
+                                              test.status === 'completed' ? 'badge-approved' : 
+                                              'badge-testing'}">
+                            ${test.status === 'template' ? 'TEMPLATE' : 
+                             test.status === 'completed' ? 'COMPLETO' : 'ATRIBUIDO'}
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        <p>📝 ${test.questions || 0} questões</p>
+                        <p>🎯 Para passar: ${test.passingScore || 0}/10</p>
+                        ${test.pilotId ? `<p>👤 Piloto: ${pilots[test.pilotId]?.name || 'N/A'}</p>` : ''}
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-small btn-primary" onclick="viewTest('${test.id}')">👁️ Ver</button>
+                        ${test.status === 'template' ? `
+                            <button class="btn btn-small btn-success" onclick="assignTestToPilot('${test.id}')">👤 Atribuir</button>
+                        ` : ''}
+                    </div>
                 </div>
             `).join('');
         }
@@ -649,7 +1665,7 @@
         function loadAdminFlights() {
             if (!isAdmin) return;
             
-            const container = document.getElementById('flightsAdminList');
+            const container = document.getElementById('adminFlightsList');
             
             if (flights.length === 0) {
                 container.innerHTML = '<div class="card">Nenhum voo agendado</div>';
@@ -657,56 +1673,239 @@
             }
             
             container.innerHTML = flights.map(flight => `
-                <div class="card" style="margin-bottom: 10px;">
-                    <h4>✈️ Voo ${flight.number}</h4>
-                    <p>${flight.origin} → ${flight.destination}</p>
-                    <p>📅 ${flight.date} ${flight.time}</p>
-                    <p>Piloto: ${flight.pilotId ? pilots[flight.pilotId]?.name : 'Não designado'}</p>
-                    <p>Status: ${flight.status}</p>
+                <div class="card" style="margin-bottom: 15px;">
+                    <div class="card-header">
+                        <div class="card-title">Voo ${flight.number}</div>
+                        <div class="card-badge ${flight.status === 'scheduled' ? 'badge-approved' : 
+                                              flight.status === 'available' ? 'badge-pending' : 
+                                              'badge-rejected'}">
+                            ${flight.status === 'scheduled' ? 'AGENDADO' : 
+                             flight.status === 'available' ? 'DISPONÍVEL' : 'CANCELADO'}
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        <p>🛫 ${flight.origin} → ${flight.destination}</p>
+                        <p>📅 ${flight.date} ${flight.time}</p>
+                        <p>✈️ ${flight.aircraft}</p>
+                        <p>👤 Piloto: ${flight.pilotId ? pilots[flight.pilotId]?.name : 'À designar'}</p>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-small btn-primary" onclick="viewFlight('${flight.id}')">👁️ Ver</button>
+                        ${!flight.pilotId && flight.status === 'available' ? `
+                            <button class="btn btn-small btn-success" onclick="assignFlight('${flight.id}')">👤 Designar</button>
+                        ` : ''}
+                    </div>
                 </div>
             `).join('');
         }
         
+        // ==================== FUNÇÕES UTILITÁRIAS ====================
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 4000);
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+        
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // ==================== FUNÇÕES DE EXEMPLO ====================
+        function checkTest() {
+            showNotification('Verificando testes disponíveis...', 'info');
+        }
+        
+        function startTest(testId) {
+            alert(`Iniciando teste ${testId}...`);
+        }
+        
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message || !currentUser) return;
+            
+            const chatMessage = {
+                id: Date.now().toString(),
+                sender: isAdmin ? 'admin' : 'pilot',
+                pilotId: currentUser.id,
+                message: message,
+                time: getCurrentTime()
+            };
+            
+            chatMessages.push(chatMessage);
+            saveData();
+            
+            input.value = '';
+            loadChat();
+            showNotification('Mensagem enviada!', 'success');
+        }
+        
+        function updateServerStatus() {
+            if (!currentUser) return;
+            
+            const serverStatus = document.getElementById('serverStatus');
+            const serverLink = document.getElementById('serverLink');
+            const joinBtn = document.getElementById('joinServerBtn');
+            
+            if (currentUser.status === 'approved') {
+                serverStatus.textContent = 'LIBERADO';
+                serverStatus.className = 'card-badge badge-approved';
+                serverLink.style.display = 'block';
+                joinBtn.disabled = false;
+            }
+        }
+        
+        function joinServer() {
+            if (currentUser.status === 'approved') {
+                window.open(CONFIG.ROBLOX_LINK, '_blank');
+            } else {
+                showNotification('Servidor não liberado para seu status', 'error');
+            }
+        }
+        
+        function openWhatsApp() {
+            window.open(CONFIG.WHATSAPP_LINK, '_blank');
+        }
+        
+        function showRegister() {
+            closeModal('loginModal');
+            showModal('registerModal');
+        }
+        
+        function register() {
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const roblox = document.getElementById('registerRoblox').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            if (!name || !email || !roblox || !password) {
+                showNotification('Preencha todos os campos', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('Senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showNotification('As senhas não coincidem', 'error');
+                return;
+            }
+            
+            // Verificar email
+            for (const id in pilots) {
+                if (pilots[id].email === email) {
+                    showNotification('Este email já está cadastrado', 'error');
+                    return;
+                }
+            }
+            
+            // Criar novo piloto
+            const pilotId = 'DL-' + (Object.keys(pilots).length + 1).toString().padStart(3, '0');
+            const newPilot = {
+                id: pilotId,
+                name: name,
+                email: email,
+                whatsapp: document.getElementById('registerWhatsApp').value.trim(),
+                roblox: roblox,
+                password: password,
+                score: 0,
+                level: 'Aprendiz',
+                status: 'pending',
+                licenseExpiry: '2024-12-31'
+            };
+            
+            pilots[pilotId] = newPilot;
+            saveData();
+            
+            showNotification(`✅ Cadastro realizado! Seu ID: ${pilotId}`, 'success');
+            closeModal('registerModal');
+            
+            // Auto login
+            loginAsPilot(newPilot);
+        }
+        
+        function downloadLicense() {
+            alert('📋 Carteira baixada com sucesso!');
+        }
+        
+        function showAvailableFlights() {
+            const available = flights.filter(f => !f.pilotId && f.status === 'available');
+            
+            if (available.length === 0) {
+                showNotification('Nenhum voo disponível', 'info');
+                return;
+            }
+            
+            let message = 'VOOS DISPONÍVEIS:\n\n';
+            available.forEach(flight => {
+                message += `✈️ ${flight.number}: ${flight.origin} → ${flight.destination}\n`;
+                message += `   📅 ${flight.date} ${flight.time}\n`;
+                message += `   ✈️ ${flight.aircraft}\n\n`;
+            });
+            
+            alert(message);
+        }
+        
+        // ==================== FUNÇÕES ADMIN (EXEMPLO) ====================
         function createTest() {
             if (!isAdmin) return;
             
-            const testName = prompt("Nome do teste:");
+            const testName = prompt('Nome do teste:');
             if (!testName) return;
             
-            const testId = "test_" + Date.now();
+            const testId = Date.now().toString();
             tests[testId] = {
                 id: testId,
                 name: testName,
                 questions: 10,
                 passingScore: 7,
-                status: "template"
+                status: 'template'
             };
             
             saveData();
             loadAdminTests();
-            alert("✅ Teste criado com sucesso!");
+            showNotification('Teste criado com sucesso!', 'success');
         }
         
         function createFlight() {
             if (!isAdmin) return;
             
-            const flightNumber = prompt("Número do voo:");
+            const flightNumber = prompt('Número do voo:');
             if (!flightNumber) return;
             
             flights.push({
-                id: "flight_" + Date.now(),
+                id: Date.now().toString(),
                 number: flightNumber,
-                origin: "São Paulo",
-                destination: "Rio de Janeiro",
-                date: "2024-12-20",
-                time: "10:00",
+                origin: 'SBGR - Guarulhos',
+                destination: 'KJFK - Nova York',
+                date: '2024-12-25',
+                time: '14:30',
+                aircraft: 'Boeing 777',
                 pilotId: null,
-                status: "available"
+                status: 'available'
             });
             
             saveData();
             loadAdminFlights();
-            alert("✅ Voo agendado!");
+            showNotification('Voo agendado com sucesso!', 'success');
         }
         
         function assignTest(pilotId) {
@@ -716,92 +1915,66 @@
             if (!pilot) return;
             
             // Encontrar teste template
-            const availableTest = Object.values(tests).find(t => t.status === "template");
+            const availableTest = Object.values(tests).find(t => t.status === 'template');
             
             if (!availableTest) {
-                alert("Crie um teste primeiro!");
+                showNotification('Crie um teste primeiro!', 'error');
                 createTest();
                 return;
             }
             
-            // Criar cópia do teste para o piloto
-            const testId = "test_" + Date.now() + "_" + pilotId;
+            // Criar cópia do teste
+            const testId = Date.now().toString();
             tests[testId] = {
                 ...availableTest,
                 id: testId,
                 pilotId: pilotId,
-                status: "pending"
+                status: 'pending'
             };
             
-            // Atualizar status do piloto
-            pilot.status = "testing";
+            // Atualizar piloto
+            pilot.status = 'testing';
             pilots[pilotId] = pilot;
             
             saveData();
             loadAdminPilots();
-            alert(`✅ Teste atribuído a ${pilot.name}!`);
+            showNotification(`Teste atribuído a ${pilot.name}!`, 'success');
         }
         
         function viewPilot(pilotId) {
             const pilot = pilots[pilotId];
             if (!pilot) return;
             
-            alert(`PERFIL DO PILOTO:\n\n👤 Nome: ${pilot.name}\n🆔 ID: ${pilot.id}\n📧 Email: ${pilot.email}\n📊 Pontuação: ${pilot.score || 0}\n📋 Status: ${pilot.status}\n🎯 Nível: ${pilot.level || 'Aprendiz'}`);
+            alert(`👤 ${pilot.name}\n🆔 ${pilot.id}\n📧 ${pilot.email}\n📱 ${pilot.whatsapp}\n🎮 ${pilot.roblox}\n📊 ${pilot.score} pontos\n📋 ${pilot.status}`);
         }
         
         function messagePilot(pilotId) {
             const pilot = pilots[pilotId];
             if (!pilot) return;
             
-            const message = prompt(`Digite a mensagem para ${pilot.name}:`);
+            const message = prompt(`Mensagem para ${pilot.name}:`);
             if (message) {
-                alert(`✅ Mensagem enviada para ${pilot.name}!`);
+                // Adicionar ao chat
+                chatMessages.push({
+                    id: Date.now().toString(),
+                    sender: 'admin',
+                    pilotId: pilotId,
+                    message: message,
+                    time: getCurrentTime()
+                });
+                
+                saveData();
+                showNotification(`Mensagem enviada para ${pilot.name}`, 'success');
             }
         }
         
-        function showRegister() {
-            const name = prompt("Nome completo:");
-            if (!name) return;
-            
-            const email = prompt("E-mail:");
-            if (!email) return;
-            
-            const roblox = prompt("Usuário Roblox:");
-            if (!roblox) return;
-            
-            const password = prompt("Senha (mínimo 6 caracteres):");
-            if (!password || password.length < 6) {
-                alert("Senha inválida!");
-                return;
-            }
-            
-            // Verificar se email já existe
-            for (const id in pilots) {
-                if (pilots[id].email === email) {
-                    alert("Este e-mail já está cadastrado!");
-                    return;
-                }
-            }
-            
-            // Criar novo piloto
-            const pilotId = "DL-" + (Object.keys(pilots).length + 1).toString().padStart(3, '0');
-            pilots[pilotId] = {
-                id: pilotId,
-                name: name,
-                email: email,
-                roblox: roblox,
-                password: password,
-                score: 0,
-                status: "pending",
-                level: "Aprendiz"
-            };
-            
-            saveData();
-            
-            alert(`✅ Cadastro realizado! Seu ID é: ${pilotId}\n\nFaça login com:\nEmail: ${email}\nSenha: ${password}`);
+        // ==================== INICIALIZAÇÃO ====================
+        function init() {
+            loadData();
+            console.log('✅ Sistema Delta Airlines RP inicializado!');
         }
         
-        // Inicializar quando a página carregar
+        // Iniciar quando a página carregar
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
