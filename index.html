@@ -1577,7 +1577,7 @@
             
             if (loginMode === 'admin') {
                 const adminCode = elements.adminCode.value.trim();
-                if (adminCode !== Delta Word) {
+                if (adminCode !== CONFIG.ADMIN_CODE) {
                     showNotification('Código administrativo incorreto', 'error');
                     return;
                 }
@@ -1859,10 +1859,11 @@
             });
             
             // Mostrar sub-aba selecionada
-            document.getElementById('admin' + subtabId.charAt(0).toUpperCase() + subtabId.slice(1)).classList.add('active');
+            const element = document.getElementById('admin' + subtabId.charAt(0).toUpperCase() + subtabId.slice(1));
+            if (element) element.classList.add('active');
             
             // Ativar botão da sub-aba
-            document.querySelector(`[data-subtab="${subtabId}"]`).classList.add('active');
+            document.querySelector(`[data-subtab="${subtabId}"]`)?.classList.add('active');
         }
         
         // ==================== SISTEMA DE PONTUAÇÃO ====================
@@ -2599,10 +2600,10 @@ ${passed ? 'Parabéns! Você está apto para voar.' : 'Estude mais e tente novam
 🔗 LINKS IMPORTANTES:
 
 🎮 Servidor Roblox:
-${https://www.roblox.com/share?code=d05a3163e2a0794480d4f23e122c1504&type=Server}
+${CONFIG.ROBOX_SERVER_LINK}
 
 📱 Grupo WhatsApp:
-${https://chat.whatsapp.com/IGETya2bgepDxqirxXwFPQ}
+${CONFIG.WHATSAPP_GROUP_LINK}
 
 📋 Sua carteira está disponível na aba "Minha Carteira".
 
@@ -3025,7 +3026,7 @@ ${https://chat.whatsapp.com/IGETya2bgepDxqirxXwFPQ}
                     robloxUser: 'PilotJoao',
                     age: 25,
                     nationality: 'Brasileiro',
-                    password: '123456',
+                    password: '123456', // Senha de exemplo
                     score: 150,
                     level: 'Piloto Jr',
                     status: 'approved',
