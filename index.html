@@ -365,7 +365,7 @@
             margin-top: 15px;
         }
         
-        /* CHAT */
+        /* CHAT - MELHORADO */
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -395,43 +395,47 @@
         }
         
         .message {
-            max-width: 70%;
+            max-width: 80%;
             padding: 12px 18px;
-            border-radius: 15px;
+            border-radius: 18px;
             position: relative;
+            word-wrap: break-word;
         }
         
         .message.admin {
             align-self: flex-end;
-            background: rgba(255, 153, 0, 0.2);
+            background: linear-gradient(135deg, #ff9900, #ff6600);
             border: 1px solid rgba(255, 153, 0, 0.3);
         }
         
         .message.pilot {
             align-self: flex-start;
-            background: rgba(0, 102, 204, 0.2);
+            background: rgba(0, 102, 204, 0.8);
             border: 1px solid rgba(0, 102, 204, 0.3);
         }
         
         .message-sender {
             font-size: 0.8rem;
-            color: #ff9900;
+            color: #ffffff;
             margin-bottom: 5px;
             font-weight: bold;
+            opacity: 0.8;
         }
         
         .message-content {
             color: #ffffff;
+            font-size: 0.95rem;
+            line-height: 1.4;
         }
         
         .message-time {
             font-size: 0.7rem;
-            color: #99ccff;
+            color: rgba(255, 255, 255, 0.7);
             text-align: right;
             margin-top: 5px;
         }
         
-        .chat-input {
+        .chat-input-container {
             display: flex;
             padding: 15px;
             background: rgba(0, 51, 102, 0.9);
@@ -439,13 +443,19 @@
             gap: 10px;
         }
         
-        .chat-input input {
+        .chat-input {
             flex: 1;
             padding: 12px 15px;
-            border-radius: 10px;
+            border-radius: 25px;
             border: 2px solid rgba(255, 153, 0, 0.2);
             background: rgba(0, 68, 136, 0.8);
             color: #ffffff;
+            font-size: 0.95rem;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #ff9900;
         }
         
         /* TABELAS */
@@ -663,7 +673,7 @@
             background: rgba(0, 51, 102, 0.95);
             border-radius: 20px;
             padding: 30px;
-            max-width: 500px;
+            max-width: 800px;
             width: 90%;
             border: 3px solid #ff9900;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
@@ -694,6 +704,42 @@
             padding: 5px;
         }
         
+        /* ESTILOS PARA AS SUB-ABAS DO ADMIN */
+        .admin-subtab {
+            display: none;
+        }
+        
+        .admin-subtab.active {
+            display: block;
+        }
+        
+        /* MODAL DE CRIAR PERGUNTAS */
+        .question-item {
+            background: rgba(0, 68, 136, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 153, 0, 0.2);
+        }
+        
+        .question-options {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .question-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .correct-option {
+            background: rgba(0, 204, 102, 0.2);
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+        
         /* FOOTER */
         footer {
             text-align: center;
@@ -702,15 +748,6 @@
             border-top: 2px solid rgba(255, 153, 0, 0.2);
             color: #99ccff;
             font-size: 0.9rem;
-        }
-        
-        /* ESTILOS PARA AS SUB-ABAS DO ADMIN */
-        .admin-subtab {
-            display: none;
-        }
-        
-        .admin-subtab.active {
-            display: block;
         }
         
         /* RESPONSIVO */
@@ -746,6 +783,10 @@
             .card-actions {
                 flex-direction: column;
             }
+            
+            .message {
+                max-width: 90%;
+            }
         }
         
         @media (max-width: 480px) {
@@ -763,6 +804,10 @@
             
             .chat-container {
                 height: 400px;
+            }
+            
+            .modal-content {
+                padding: 20px;
             }
         }
     </style>
@@ -862,6 +907,40 @@
             </div>
             <div id="testContent">
                 <!-- Conteúdo do teste será injetado aqui -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL CRIAR PERGUNTAS -->
+    <div id="createQuestionsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📝 CRIAR NOVAS PERGUNTAS</h2>
+                <button class="close-modal" onclick="closeCreateQuestionsModal()">&times;</button>
+            </div>
+            <div id="createQuestionsContent">
+                <div class="form-group">
+                    <label>📋 Nome do Teste</label>
+                    <input type="text" id="newTestName" placeholder="Ex: Teste Básico de Pilotagem">
+                </div>
+                <div class="form-group">
+                    <label>🎯 Pontuação para Aprovar</label>
+                    <input type="number" id="newTestPassingScore" placeholder="7" min="1" max="20">
+                </div>
+                
+                <div id="questionsContainer">
+                    <!-- Perguntas serão adicionadas aqui -->
+                </div>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <button class="btn btn-success" onclick="addNewQuestion()">
+                        ➕ ADICIONAR PERGUNTA
+                    </button>
+                </div>
+                
+                <button class="btn btn-primary" onclick="saveNewTest()" style="width: 100%;">
+                    💾 SALVAR TESTE
+                </button>
             </div>
         </div>
     </div>
@@ -1070,19 +1149,19 @@
                         <div class="chat-header">
                             <span style="color: #ff9900;">💬</span>
                             <span style="color: #ffffff; font-weight: bold;">Chat com Administração</span>
-                            <span style="color: #99ccff; margin-left: auto; font-size: 0.9rem;" id="chatStatus">Conectado</span>
+                            <span style="color: #99ccff; margin-left: auto; font-size: 0.9rem;" id="chatStatus">🟢 Online</span>
                         </div>
                         
                         <div class="chat-messages" id="chatMessages">
                             <div class="message admin">
                                 <div class="message-sender">Administração Delta</div>
                                 <div class="message-content">Olá! Bem-vindo ao sistema Delta Airlines RP. Como posso ajudá-lo hoje?</div>
-                                <div class="message-time">10:00</div>
+                                <div class="message-time" id="currentTime">10:00</div>
                             </div>
                         </div>
                         
-                        <div class="chat-input">
-                            <input type="text" id="chatInput" placeholder="Digite sua mensagem..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="Digite sua mensagem..." onkeypress="if(event.key === 'Enter') sendMessage()">
                             <button class="btn btn-primary" onclick="sendMessage()">Enviar</button>
                         </div>
                     </div>
@@ -1234,8 +1313,11 @@
                                     <button class="btn btn-primary btn-small" onclick="showAllPilots()">
                                         👥 Ver Todos Pilotos
                                     </button>
-                                    <button class="btn btn-secondary btn-small" onclick="scheduleFlight()">
+                                    <button class="btn btn-secondary btn-small" onclick="showScheduleFlightModal()">
                                         ✈️ Agendar Voo
+                                    </button>
+                                    <button class="btn btn-success btn-small" onclick="showCreateQuestionsModal()">
+                                        📝 Criar Teste
                                     </button>
                                 </div>
                             </div>
@@ -1281,6 +1363,14 @@
                         
                         <div id="adminTests" class="admin-subtab">
                             <h3 style="color: #ff9900; margin-bottom: 15px;">🧪 GERENCIAR TESTES</h3>
+                            <div style="margin-bottom: 20px;">
+                                <button class="btn btn-primary" onclick="showCreateQuestionsModal()">
+                                    📝 CRIAR NOVO TESTE
+                                </button>
+                                <button class="btn btn-secondary" onclick="loadAdminTests()">
+                                    🔄 Atualizar
+                                </button>
+                            </div>
                             <div class="cards-grid" id="adminTestsList">
                                 <!-- Lista de testes será injetada aqui -->
                             </div>
@@ -1292,6 +1382,9 @@
                                 <button class="btn btn-primary" onclick="showScheduleFlightModal()">
                                     ➕ Agendar Novo Voo
                                 </button>
+                                <button class="btn btn-secondary" onclick="loadAdminFlights()">
+                                    🔄 Atualizar
+                                </button>
                             </div>
                             <div class="cards-grid" id="adminFlightsList">
                                 <!-- Lista de voos será injetada aqui -->
@@ -1300,6 +1393,11 @@
                         
                         <div id="adminMessages" class="admin-subtab">
                             <h3 style="color: #ff9900; margin-bottom: 15px;">💬 MENSAGENS PARA PILOTOS</h3>
+                            <div style="margin-bottom: 20px;">
+                                <button class="btn btn-primary" onclick="sendMessageToAll()">
+                                    📢 Enviar para Todos
+                                </button>
+                            </div>
                             <div class="cards-grid" id="adminMessagesList">
                                 <!-- Mensagens serão injetadas aqui -->
                             </div>
@@ -1329,7 +1427,7 @@
                                         <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 10px; margin-top: 10px;">
                                             <div style="color: #ff9900; font-weight: bold; margin-bottom: 5px;">LINK DO SERVIDOR:</div>
                                             <div style="color: #ffffff; word-break: break-all;" id="serverLinkText">
-                                                https://www.roblox.com/games/...
+                                                https://www.roblox.com/share?code=d05a3163e2a0794480d4f23e122c1504&type=Server
                                             </div>
                                         </div>
                                     </div>
@@ -1350,7 +1448,7 @@
                                     <div style="background: rgba(0, 204, 102, 0.1); padding: 15px; border-radius: 10px; margin-top: 10px; border: 1px solid #00cc66;">
                                         <div style="color: #00cc66; font-weight: bold; margin-bottom: 5px;">LINK DO WHATSAPP:</div>
                                         <div style="color: #ffffff; word-break: break-all;">
-                                            https://chat.whatsapp.com/SeuLinkDoGrupo
+                                            https://chat.whatsapp.com/IGETya2bgepDxqirxXwFPQ
                                         </div>
                                     </div>
                                 </div>
@@ -1378,8 +1476,8 @@
         const CONFIG = {
             ADMIN_CODE: "DeltaAdmin2024!", // ⚠️ MUDE ESTA SENHA!
             LOCAL_STORAGE_KEY: "delta_airlines_rp",
-            WHATSAPP_GROUP_LINK: "https://chat.whatsapp.com/SeuLinkDoGrupo", // ⚠️ COLE SEU LINK AQUI!
-            ROBOX_SERVER_LINK: "https://www.roblox.com/games/SeuJogoID", // ⚠️ COLE SEU LINK AQUI!
+            WHATSAPP_GROUP_LINK: "https://chat.whatsapp.com/IGETya2bgepDxqirxXwFPQ",
+            ROBOX_SERVER_LINK: "https://www.roblox.com/share?code=d05a3163e2a0794480d4f23e122c1504&type=Server",
             VERSION: "1.0",
             
             // Pontuações e níveis
@@ -1391,12 +1489,36 @@
                 { name: "Comandante", minScore: 1000, maxScore: 9999 }
             ],
             
-            // Testes
-            TESTS: [
-                { id: "test_1", name: "Teste Básico de Pilotagem", questions: 10, passingScore: 7 },
-                { id: "test_2", name: "Teste de Navegação", questions: 15, passingScore: 11 },
-                { id: "test_3", name: "Teste de Emergência", questions: 12, passingScore: 9 },
-                { id: "test_4", name: "Teste de Comunicação", questions: 8, passingScore: 6 }
+            // Testes padrão
+            DEFAULT_TESTS: [
+                { 
+                    id: "test_1", 
+                    name: "Teste Básico de Pilotagem", 
+                    questions: 10, 
+                    passingScore: 7,
+                    questionsData: [
+                        {
+                            question: "O que fazer em caso de perda total de energia?",
+                            options: [
+                                "Manter a calma e seguir o checklist de emergência",
+                                "Pular do avião imediatamente",
+                                "Desligar todos os sistemas",
+                                "Pedir ajuda pelo rádio"
+                            ],
+                            correct: 0
+                        },
+                        {
+                            question: "Qual a altitude ideal para cruzeiro?",
+                            options: [
+                                "10.000 pés",
+                                "25.000 pés",
+                                "35.000 pés",
+                                "45.000 pés"
+                            ],
+                            correct: 2
+                        }
+                    ]
+                }
             ]
         };
         
@@ -1410,6 +1532,7 @@
         let chatMessages = JSON.parse(localStorage.getItem(CONFIG.LOCAL_STORAGE_KEY + "_chat") || '[]');
         let currentTest = null;
         let scoreChart = null;
+        let chatInterval = null;
         
         // ==================== ELEMENTOS DOM ====================
         const elements = {
@@ -1417,6 +1540,7 @@
             loginModal: document.getElementById('loginModal'),
             registerModal: document.getElementById('registerModal'),
             testModal: document.getElementById('testModal'),
+            createQuestionsModal: document.getElementById('createQuestionsModal'),
             licenseModal: document.getElementById('licenseModal'),
             
             // Login
@@ -1436,6 +1560,11 @@
             registerNationality: document.getElementById('registerNationality'),
             registerPassword: document.getElementById('registerPassword'),
             registerConfirmPassword: document.getElementById('registerConfirmPassword'),
+            
+            // Criar perguntas
+            newTestName: document.getElementById('newTestName'),
+            newTestPassingScore: document.getElementById('newTestPassingScore'),
+            questionsContainer: document.getElementById('questionsContainer'),
             
             // Main Content
             mainContent: document.getElementById('mainContent'),
@@ -1543,6 +1672,11 @@
                 }
             }
             return 100;
+        }
+        
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         }
         
         // ==================== SISTEMA DE LOGIN/CADASTRO ====================
@@ -1721,6 +1855,7 @@
             currentUser = null;
             isAdmin = false;
             elements.mainContent.style.display = 'none';
+            clearInterval(chatInterval);
             showLoginModal();
             showNotification('👋 Logout realizado com sucesso');
         }
@@ -1747,6 +1882,9 @@
             
             // Verificar se há testes pendentes
             checkForPendingTest();
+            
+            // Iniciar atualização automática do chat
+            startChatAutoRefresh();
         }
         
         function updatePilotDashboard() {
@@ -2212,26 +2350,35 @@
             
             elements.testModal.style.display = 'flex';
             
-            // Carregar questões (simuladas)
-            setTimeout(loadTestQuestions, 500);
+            // Carregar questões
+            setTimeout(() => loadTestQuestions(currentTest), 500);
         }
         
-        function loadTestQuestions() {
-            if (!currentTest) return;
+        function loadTestQuestions(test) {
+            if (!test) return;
             
             const questionsContainer = document.getElementById('testQuestions');
-            const questions = currentTest.questions || generateTestQuestions();
+            const questions = test.questionsData || generateTestQuestions();
+            
+            if (questions.length === 0) {
+                questionsContainer.innerHTML = `
+                    <div style="text-align: center; color: #ff9900; padding: 20px;">
+                        Nenhuma questão disponível para este teste.
+                    </div>
+                `;
+                return;
+            }
             
             questionsContainer.innerHTML = questions.map((q, index) => `
-                <div style="background: rgba(0, 68, 136, 0.8); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                <div class="question-item">
                     <div style="color: #ff9900; font-weight: bold; margin-bottom: 10px;">
                         Questão ${index + 1}: ${q.question}
                     </div>
-                    <div style="color: #99ccff;">
+                    <div class="question-options">
                         ${q.options.map((option, i) => `
-                            <div style="margin-bottom: 8px;">
+                            <div class="question-option">
                                 <input type="radio" id="q${index}_${i}" name="q${index}" value="${i}">
-                                <label for="q${index}_${i}" style="margin-left: 8px;">${option}</label>
+                                <label for="q${index}_${i}" style="color: #99ccff;">${option}</label>
                             </div>
                         `).join('')}
                     </div>
@@ -2279,7 +2426,7 @@
             if (!currentTest) return;
             
             // Coletar respostas
-            const questions = currentTest.questions || generateTestQuestions();
+            const questions = currentTest.questionsData || generateTestQuestions();
             let score = 0;
             
             for (let i = 0; i < questions.length; i++) {
@@ -2291,7 +2438,8 @@
             
             // Calcular porcentagem
             const percentage = (score / questions.length) * 100;
-            const passed = percentage >= 70; // 70% para passar
+            const passingScore = currentTest.passingScore || Math.ceil(questions.length * 0.7);
+            const passed = score >= passingScore;
             
             // Atualizar teste
             currentTest.completed = true;
@@ -2344,6 +2492,7 @@
             alert(`RESULTADO DO TESTE:
             
 📊 Nota: ${score}/${questions.length} (${percentage.toFixed(1)}%)
+🎯 Mínimo para aprovar: ${passingScore}/${questions.length}
 ${passed ? '✅ APROVADO!' : '❌ REPROVADO'}
 ${passed ? 'Parabéns! Você está apto para voar.' : 'Estude mais e tente novamente.'}`);
             
@@ -2392,10 +2541,6 @@ ${passed ? 'Parabéns! Você está apto para voar.' : 'Estude mais e tente novam
                             <span>${new Date(test.date).toLocaleDateString('pt-BR')}</span>
                         </div>
                         <div>
-                            <span>⏱️ Tempo:</span>
-                            <span>${test.duration || 'N/A'}</span>
-                        </div>
-                        <div>
                             <span>🎯 Status:</span>
                             <span>${test.passed ? '✅ Aprovado' : '❌ Reprovado'}</span>
                         </div>
@@ -2405,32 +2550,54 @@ ${passed ? 'Parabéns! Você está apto para voar.' : 'Estude mais e tente novam
         }
         
         // ==================== SISTEMA DE CHAT ====================
+        function startChatAutoRefresh() {
+            // Atualizar chat a cada 2 segundos
+            clearInterval(chatInterval);
+            chatInterval = setInterval(() => {
+                if (document.getElementById('chat').classList.contains('active')) {
+                    loadChatMessages();
+                }
+            }, 2000);
+        }
+        
         function loadChatMessages() {
             if (!currentUser) return;
             
             // Filtrar mensagens do piloto atual ou mensagens para todos
-            const pilotMessages = chatMessages.filter(msg => 
-                msg.pilotId === currentUser.id || msg.toAll === true
-            );
+            let pilotMessages;
+            if (isAdmin) {
+                // Admin vê todas as mensagens
+                pilotMessages = chatMessages;
+            } else {
+                pilotMessages = chatMessages.filter(msg => 
+                    msg.pilotId === currentUser.id || msg.toAll === true
+                );
+            }
             
             if (pilotMessages.length === 0) {
                 elements.chatMessages.innerHTML = `
                     <div class="message admin">
                         <div class="message-sender">Administração Delta</div>
                         <div class="message-content">Olá! Bem-vindo ao sistema Delta Airlines RP. Como posso ajudá-lo hoje?</div>
-                        <div class="message-time">10:00</div>
+                        <div class="message-time">${getCurrentTime()}</div>
                     </div>
                 `;
                 return;
             }
             
-            elements.chatMessages.innerHTML = pilotMessages.map(msg => `
-                <div class="message ${msg.sender === 'admin' ? 'admin' : 'pilot'}">
-                    <div class="message-sender">${msg.sender === 'admin' ? 'Administração Delta' : currentUser.name}</div>
-                    <div class="message-content">${msg.content}</div>
-                    <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
-                </div>
-            `).join('');
+            elements.chatMessages.innerHTML = pilotMessages.map(msg => {
+                const senderName = msg.sender === 'admin' ? 'Administração Delta' : 
+                                  (isAdmin ? (allPilots[msg.pilotId]?.name || 'Piloto') : currentUser.name);
+                const time = new Date(msg.timestamp).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                
+                return `
+                    <div class="message ${msg.sender === 'admin' ? 'admin' : 'pilot'}">
+                        <div class="message-sender">${senderName}</div>
+                        <div class="message-content">${msg.content}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                `;
+            }).join('');
             
             // Rolar para baixo
             elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
@@ -2444,7 +2611,7 @@ ${passed ? 'Parabéns! Você está apto para voar.' : 'Estude mais e tente novam
             const message = {
                 id: 'msg_' + Date.now(),
                 pilotId: currentUser.id,
-                sender: 'pilot',
+                sender: isAdmin ? 'admin' : 'pilot',
                 content: content,
                 timestamp: new Date().toISOString(),
                 read: false
@@ -2459,13 +2626,17 @@ ${passed ? 'Parabéns! Você está apto para voar.' : 'Estude mais e tente novam
             // Atualizar chat
             loadChatMessages();
             
-            // Notificar admin (simulado)
-            addAdminMessage(`Nova mensagem de ${currentUser.name}: ${content}`);
-            
-            showNotification('Mensagem enviada!');
+            // Notificar
+            if (isAdmin) {
+                showNotification('Mensagem enviada para o piloto', 'success');
+            } else {
+                showNotification('Mensagem enviada para a administração', 'success');
+                // Notificar admin (simulado)
+                addAdminMessage(`Nova mensagem de ${currentUser.name}: ${content}`);
+            }
         }
         
-        function addChatMessage(sender, content) {
+        function addChatMessage(sender, content, toAll = false) {
             if (!currentUser) return;
             
             const message = {
@@ -2474,7 +2645,8 @@ ${passed ? 'Parabéns! Você está apto para voar.' : 'Estude mais e tente novam
                 sender: sender,
                 content: content,
                 timestamp: new Date().toISOString(),
-                read: false
+                read: false,
+                toAll: toAll
             };
             
             chatMessages.push(message);
@@ -2736,7 +2908,7 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
             if (tests.length === 0) {
                 elements.adminTestsList.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #99ccff; grid-column: 1 / -1;">
-                        Nenhum teste atribuído
+                        Nenhum teste criado
                     </div>
                 `;
                 return;
@@ -2747,38 +2919,35 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
                     <div class="card-header">
                         <div class="card-title">${test.name}</div>
                         <div class="card-badge ${test.completed ? (test.passed ? 'badge-approved' : 'badge-rejected') : 'badge-pending'}">
-                            ${test.completed ? (test.passed ? 'COMPLETO' : 'REPROVADO') : 'PENDENTE'}
+                            ${test.completed ? (test.passed ? 'COMPLETO' : 'REPROVADO') : 'DISPONÍVEL'}
                         </div>
                     </div>
                     <div class="card-details">
                         <div>
-                            <span>👨‍✈️ Piloto:</span>
-                            <span>${allPilots[test.pilotId]?.name || 'N/A'}</span>
+                            <span>📋 Tipo:</span>
+                            <span>${test.name}</span>
                         </div>
-                        ${test.completed ? `
+                        <div>
+                            <span>🎯 Pontos para passar:</span>
+                            <span>${test.passingScore || '7'}/10</span>
+                        </div>
+                        <div>
+                            <span>📝 Questões:</span>
+                            <span>${test.questionsData ? test.questionsData.length : '0'}</span>
+                        </div>
+                        ${test.pilotId ? `
                             <div>
-                                <span>📊 Nota:</span>
-                                <span>${test.score}/${test.total} (${test.percentage?.toFixed(1) || '0'}%)</span>
+                                <span>👨‍✈️ Atribuído para:</span>
+                                <span>${allPilots[test.pilotId]?.name || 'N/A'}</span>
                             </div>
-                            <div>
-                                <span>📅 Data:</span>
-                                <span>${new Date(test.completedAt).toLocaleDateString('pt-BR')}</span>
-                            </div>
-                        ` : `
-                            <div>
-                                <span>📅 Atribuído:</span>
-                                <span>${new Date(test.assignedAt).toLocaleDateString('pt-BR')}</span>
-                            </div>
-                        `}
+                        ` : ''}
                     </div>
                     <div class="card-actions">
-                        ${!test.completed ? `
-                            <button class="btn btn-small btn-primary" onclick="adminSendTestReminder('${test.id}')">
-                                🔔 Lembrete
-                            </button>
-                        ` : ''}
-                        <button class="btn btn-small btn-secondary" onclick="adminViewTestDetails('${test.id}')">
-                            📋 Detalhes
+                        <button class="btn btn-small btn-primary" onclick="adminViewTestDetails('${test.id}')">
+                            📋 Ver Detalhes
+                        </button>
+                        <button class="btn btn-small btn-secondary" onclick="adminAssignTestToPilot('${test.id}')">
+                            👤 Atribuir
                         </button>
                     </div>
                 </div>
@@ -2964,19 +3133,38 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
             const pilot = allPilots[pilotId];
             if (!pilot || pilot.status === 'approved') return;
             
-            const testType = prompt(`Atribuir teste para ${pilot.name}:\n\n1 - Teste Básico\n2 - Teste de Navegação\n3 - Teste de Emergência\n4 - Teste de Comunicação\n\nDigite o número do teste:`);
+            const tests = Object.values(allTests).filter(t => !t.pilotId);
             
-            if (!testType || testType < 1 || testType > 4) return;
+            if (tests.length === 0) {
+                alert('Não há testes disponíveis. Crie um teste primeiro.');
+                showCreateQuestionsModal();
+                return;
+            }
             
-            const testTypes = ['Teste Básico de Pilotagem', 'Teste de Navegação', 'Teste de Emergência', 'Teste de Comunicação'];
-            const testName = testTypes[parseInt(testType) - 1];
+            let testsList = 'TESTES DISPONÍVEIS:\n\n';
+            tests.forEach((test, index) => {
+                testsList += `${index + 1}. ${test.name} (${test.questionsData ? test.questionsData.length : 0} questões)\n`;
+            });
             
-            // Criar teste
-            const testId = 'test_' + Date.now();
+            const testChoice = prompt(`${testsList}\nDigite o número do teste para atribuir a ${pilot.name}:`);
+            if (!testChoice) return;
+            
+            const testIndex = parseInt(testChoice) - 1;
+            if (testIndex < 0 || testIndex >= tests.length) {
+                alert('Escolha inválida.');
+                return;
+            }
+            
+            const selectedTest = tests[testIndex];
+            
+            // Criar cópia do teste para o piloto
+            const testId = 'test_' + Date.now() + '_' + pilotId;
             const test = {
                 id: testId,
                 pilotId: pilotId,
-                name: testName,
+                name: selectedTest.name,
+                questionsData: selectedTest.questionsData,
+                passingScore: selectedTest.passingScore,
                 assignedBy: 'admin',
                 assignedAt: new Date().toISOString(),
                 completed: false,
@@ -2996,7 +3184,7 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
                 id: 'msg_' + Date.now(),
                 pilotId: pilotId,
                 sender: 'admin',
-                content: `🧪 TESTE ATRIBUÍDO!\n\nVocê recebeu um ${testName} para realizar.\n\nAcesse a aba "Testes" para iniciar.`,
+                content: `🧪 TESTE ATRIBUÍDO!\n\nVocê recebeu um ${selectedTest.name} para realizar.\n\nAcesse a aba "Testes" para iniciar.`,
                 timestamp: new Date().toISOString(),
                 read: false
             };
@@ -3033,10 +3221,10 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
                 number: flightNumber,
                 origin: origin,
                 destination: destination,
-                date: date + 'T00:00:00', // Formato ISO
+                date: date + 'T00:00:00',
                 time: time,
                 aircraft: aircraft,
-                status: 'available', // available, scheduled, completed, cancelled
+                status: 'available',
                 createdAt: new Date().toISOString()
             };
             
@@ -3057,41 +3245,174 @@ ${CONFIG.WHATSAPP_GROUP_LINK}
         }
         
         function addAdminMessage(content) {
-            // Simular notificação para admin
             console.log(`📢 Mensagem para admin: ${content}`);
         }
         
-        // ==================== FUNÇÕES ADMIN ADICIONAIS ====================
-        function adminViewTestDetails(testId) {
-            const test = allTests[testId];
-            if (!test) return;
-            
-            const pilot = allPilots[test.pilotId];
-            alert(`Detalhes do Teste:
-            
-🧪 Teste: ${test.name}
-👨‍✈️ Piloto: ${pilot?.name || 'N/A'}
-📅 Atribuído: ${new Date(test.assignedAt).toLocaleDateString('pt-BR')}
-${test.completed ? `
-✅ Concluído: ${new Date(test.completedAt).toLocaleDateString('pt-BR')}
-📊 Nota: ${test.score}/${test.total} (${test.percentage?.toFixed(1)}%)
-🎯 Status: ${test.passed ? 'Aprovado' : 'Reprovado'}
-` : '⏳ Pendente'}`);
+        // ==================== SISTEMA DE CRIAR PERGUNTAS ====================
+        function showCreateQuestionsModal() {
+            elements.questionsContainer.innerHTML = '';
+            addNewQuestion(); // Adiciona primeira questão automaticamente
+            elements.createQuestionsModal.style.display = 'flex';
         }
         
-        function adminSendTestReminder(testId) {
+        function closeCreateQuestionsModal() {
+            elements.createQuestionsModal.style.display = 'none';
+        }
+        
+        function addNewQuestion() {
+            const questionCount = document.querySelectorAll('.question-item').length;
+            const questionId = `question_${Date.now()}_${questionCount}`;
+            
+            const questionHTML = `
+                <div class="question-item" id="${questionId}">
+                    <div class="form-group">
+                        <label>❓ Pergunta ${questionCount + 1}</label>
+                        <input type="text" class="question-text" placeholder="Digite a pergunta">
+                    </div>
+                    <div class="question-options">
+                        <div class="form-group">
+                            <label>📝 Opções (marque a correta)</label>
+                            <div class="question-option">
+                                <input type="radio" name="correct_${questionId}" value="0">
+                                <input type="text" class="option-input" placeholder="Opção A">
+                            </div>
+                            <div class="question-option">
+                                <input type="radio" name="correct_${questionId}" value="1">
+                                <input type="text" class="option-input" placeholder="Opção B">
+                            </div>
+                            <div class="question-option">
+                                <input type="radio" name="correct_${questionId}" value="2">
+                                <input type="text" class="option-input" placeholder="Opção C">
+                            </div>
+                            <div class="question-option">
+                                <input type="radio" name="correct_${questionId}" value="3">
+                                <input type="text" class="option-input" placeholder="Opção D">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger btn-small" onclick="removeQuestion('${questionId}')" style="margin-top: 10px;">
+                        ❌ Remover Questão
+                    </button>
+                </div>
+            `;
+            
+            elements.questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+        }
+        
+        function removeQuestion(questionId) {
+            const questionElement = document.getElementById(questionId);
+            if (questionElement) {
+                questionElement.remove();
+            }
+        }
+        
+        function saveNewTest() {
+            const testName = elements.newTestName.value.trim();
+            const passingScore = parseInt(elements.newTestPassingScore.value);
+            
+            if (!testName || !passingScore) {
+                showNotification('Preencha o nome do teste e a pontuação para aprovar', 'error');
+                return;
+            }
+            
+            const questionItems = document.querySelectorAll('.question-item');
+            const questionsData = [];
+            
+            for (let item of questionItems) {
+                const questionText = item.querySelector('.question-text').value.trim();
+                const options = Array.from(item.querySelectorAll('.option-input')).map(input => input.value.trim());
+                const correctRadio = item.querySelector('input[type="radio"]:checked');
+                
+                if (!questionText || options.some(opt => !opt) || !correctRadio) {
+                    showNotification('Preencha todas as perguntas e marque a resposta correta', 'error');
+                    return;
+                }
+                
+                const correctIndex = parseInt(correctRadio.value);
+                
+                questionsData.push({
+                    question: questionText,
+                    options: options,
+                    correct: correctIndex
+                });
+            }
+            
+            if (questionsData.length === 0) {
+                showNotification('Adicione pelo menos uma pergunta', 'error');
+                return;
+            }
+            
+            // Criar novo teste
+            const testId = 'test_template_' + Date.now();
+            const test = {
+                id: testId,
+                name: testName,
+                questionsData: questionsData,
+                passingScore: passingScore,
+                createdAt: new Date().toISOString()
+            };
+            
+            allTests[testId] = test;
+            saveData();
+            
+            showNotification(`Teste "${testName}" criado com ${questionsData.length} questões!`, 'success');
+            closeCreateQuestionsModal();
+            loadAdminTests();
+        }
+        
+        // ==================== FUNÇÕES ADMIN ADICIONAIS ====================
+        function adminAssignTestToPilot(testId) {
             const test = allTests[testId];
-            if (!test) return;
+            if (!test || test.pilotId) return;
             
-            const pilot = allPilots[test.pilotId];
-            if (!pilot) return;
+            const pilots = Object.values(allPilots).filter(p => p.status !== 'approved');
             
-            // Enviar mensagem de lembrete
+            if (pilots.length === 0) {
+                alert('Não há pilotos pendentes para atribuir teste.');
+                return;
+            }
+            
+            let pilotsList = 'PILOTOS PENDENTES:\n\n';
+            pilots.forEach((pilot, index) => {
+                pilotsList += `${index + 1}. ${pilot.name} (${pilot.id})\n`;
+            });
+            
+            const pilotChoice = prompt(`${pilotsList}\nDigite o número do piloto para atribuir o teste "${test.name}":`);
+            if (!pilotChoice) return;
+            
+            const pilotIndex = parseInt(pilotChoice) - 1;
+            if (pilotIndex < 0 || pilotIndex >= pilots.length) {
+                alert('Escolha inválida.');
+                return;
+            }
+            
+            const selectedPilot = pilots[pilotIndex];
+            
+            // Criar cópia do teste para o piloto
+            const newTestId = 'test_' + Date.now() + '_' + selectedPilot.id;
+            const newTest = {
+                ...test,
+                id: newTestId,
+                pilotId: selectedPilot.id,
+                assignedBy: 'admin',
+                assignedAt: new Date().toISOString(),
+                completed: false
+            };
+            
+            allTests[newTestId] = newTest;
+            
+            // Atualizar status do piloto
+            selectedPilot.status = 'testing';
+            allPilots[selectedPilot.id] = selectedPilot;
+            
+            saveData();
+            
+            // Enviar mensagem para o piloto
             const chatMessage = {
                 id: 'msg_' + Date.now(),
-                pilotId: test.pilotId,
+                pilotId: selectedPilot.id,
                 sender: 'admin',
-                content: `⏰ LEMBRETE!\n\nVocê ainda não realizou o teste de ${test.name}.\n\nPor favor, acesse a aba "Testes" para realizá-lo.`,
+                content: `🧪 NOVO TESTE ATRIBUÍDO!\n\nVocê recebeu um ${test.name} para realizar.\n\nAcesse a aba "Testes" para iniciar.`,
                 timestamp: new Date().toISOString(),
                 read: false
             };
@@ -3099,33 +3420,32 @@ ${test.completed ? `
             chatMessages.push(chatMessage);
             saveData();
             
-            showNotification(`Lembrete enviado para ${pilot.name}`, 'success');
+            showNotification(`Teste atribuído para ${selectedPilot.name}`, 'success');
+            loadAdminTests();
         }
         
-        function adminViewFlight(flightId) {
-            const flight = allFlights.find(f => f.id === flightId);
-            if (!flight) return;
+        function adminViewTestDetails(testId) {
+            const test = allTests[testId];
+            if (!test) return;
             
-            alert(`Detalhes do Voo ${flight.number}:
+            let details = `📋 DETALHES DO TESTE:\n\n`;
+            details += `Nome: ${test.name}\n`;
+            details += `Questões: ${test.questionsData ? test.questionsData.length : 0}\n`;
+            details += `Pontuação para passar: ${test.passingScore || '7'}/10\n`;
             
-🛫 Origem: ${flight.origin}
-🛬 Destino: ${flight.destination}
-📅 Data: ${new Date(flight.date).toLocaleDateString('pt-BR')}
-⏰ Hora: ${flight.time}
-✈️ Aeronave: ${flight.aircraft}
-📊 Status: ${flight.status}
-👨‍✈️ Piloto: ${flight.pilotId ? allPilots[flight.pilotId]?.name : 'À designar'}
-📝 Notas: ${flight.notes || 'Nenhuma'}`);
+            if (test.pilotId) {
+                const pilot = allPilots[test.pilotId];
+                details += `Atribuído para: ${pilot?.name || 'N/A'} (${test.pilotId})\n`;
+            }
+            
+            alert(details);
         }
         
         function adminAssignFlight(flightId) {
             const flight = allFlights.find(f => f.id === flightId);
             if (!flight) return;
             
-            // Listar pilotos disponíveis
-            const availablePilots = Object.values(allPilots).filter(p => 
-                p.status === 'approved'
-            );
+            const availablePilots = Object.values(allPilots).filter(p => p.status === 'approved');
             
             if (availablePilots.length === 0) {
                 alert('Não há pilotos aprovados disponíveis.');
@@ -3181,73 +3501,27 @@ ${test.completed ? `
             loadAdminFlights();
         }
         
-        function adminCancelFlight(flightId) {
-            if (!confirm('Tem certeza que deseja cancelar este voo?')) return;
+        function sendMessageToAll() {
+            const message = prompt('Digite a mensagem para enviar para TODOS os pilotos:');
+            if (!message) return;
             
-            const flightIndex = allFlights.findIndex(f => f.id === flightId);
-            if (flightIndex !== -1) {
-                allFlights[flightIndex].status = 'cancelled';
-                allFlights[flightIndex].cancelledAt = new Date().toISOString();
-                
-                // Notificar piloto se houver
-                if (allFlights[flightIndex].pilotId) {
-                    const chatMessage = {
-                        id: 'msg_' + Date.now(),
-                        pilotId: allFlights[flightIndex].pilotId,
-                        sender: 'admin',
-                        content: `❌ VOO CANCELADO!\n\nO Voo ${allFlights[flightIndex].number} foi cancelado.`,
-                        timestamp: new Date().toISOString(),
-                        read: false
-                    };
-                    
-                    chatMessages.push(chatMessage);
-                }
-                
-                saveData();
-                loadAdminFlights();
-                showNotification('Voo cancelado com sucesso', 'info');
-            }
-        }
-        
-        function adminChatWithPilot(pilotId) {
-            const pilot = allPilots[pilotId];
-            if (!pilot) return;
-            
-            const message = prompt(`Enviar mensagem para ${pilot.name}:`);
-            if (message) {
+            // Enviar para todos os pilotos
+            Object.keys(allPilots).forEach(pilotId => {
                 const chatMessage = {
-                    id: 'msg_' + Date.now(),
+                    id: 'msg_toall_' + Date.now() + '_' + pilotId,
                     pilotId: pilotId,
                     sender: 'admin',
-                    content: message,
+                    content: `📢 COMUNICADO DA ADMINISTRAÇÃO:\n\n${message}`,
                     timestamp: new Date().toISOString(),
-                    read: false
+                    read: false,
+                    toAll: true
                 };
                 
                 chatMessages.push(chatMessage);
-                saveData();
-                showNotification(`Mensagem enviada para ${pilot.name}`, 'success');
-            }
-        }
-        
-        function adminViewPilotMessages(pilotId) {
-            const pilot = allPilots[pilotId];
-            if (!pilot) return;
+            });
             
-            const pilotMessages = chatMessages.filter(msg => msg.pilotId === pilotId);
-            
-            let messagesText = `MENSAGENS COM ${pilot.name.toUpperCase()}:\n\n`;
-            
-            if (pilotMessages.length === 0) {
-                messagesText += 'Nenhuma mensagem.';
-            } else {
-                pilotMessages.forEach(msg => {
-                    const time = new Date(msg.timestamp).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-                    messagesText += `[${time}] ${msg.sender === 'admin' ? 'ADMIN' : 'PILOTO'}: ${msg.content}\n\n`;
-                });
-            }
-            
-            alert(messagesText);
+            saveData();
+            showNotification('Mensagem enviada para todos os pilotos!', 'success');
         }
         
         // ==================== INICIALIZAÇÃO ====================
@@ -3257,7 +3531,7 @@ ${test.completed ? `
             
             // Carregar dados de exemplo se vazio
             if (Object.keys(allPilots).length === 0) {
-                // Adicionar alguns pilotos de exemplo
+                // Adicionar piloto de exemplo
                 allPilots['DL-001'] = {
                     id: 'DL-001',
                     name: 'João Silva',
@@ -3293,7 +3567,7 @@ ${test.completed ? `
                     createdAt: new Date().toISOString()
                 };
                 
-                // Adicionar alguns voos de exemplo
+                // Adicionar voos de exemplo
                 allFlights.push({
                     id: 'flight_1',
                     number: 'DL101',
@@ -3305,6 +3579,39 @@ ${test.completed ? `
                     status: 'available',
                     createdAt: new Date().toISOString()
                 });
+                
+                allFlights.push({
+                    id: 'flight_2',
+                    number: 'DL202',
+                    origin: 'SBSP - Congonhas',
+                    destination: 'SBGL - Galeão',
+                    date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
+                    time: '09:00',
+                    aircraft: 'Airbus A320',
+                    status: 'scheduled',
+                    pilotId: 'DL-001',
+                    createdAt: new Date().toISOString()
+                });
+                
+                // Adicionar teste de exemplo
+                allTests['test_template_1'] = {
+                    id: 'test_template_1',
+                    name: 'Teste Básico de Pilotagem',
+                    questionsData: [
+                        {
+                            question: "O que fazer em caso de perda total de energia?",
+                            options: [
+                                "Manter a calma e seguir o checklist de emergência",
+                                "Pular do avião imediatamente",
+                                "Desligar todos os sistemas",
+                                "Pedir ajuda pelo rádio"
+                            ],
+                            correct: 0
+                        }
+                    ],
+                    passingScore: 7,
+                    createdAt: new Date().toISOString()
+                };
                 
                 // Adicionar mensagem de boas-vindas
                 chatMessages.push({
@@ -3320,10 +3627,7 @@ ${test.completed ? `
             }
             
             console.log('✅ Sistema Delta Airlines RP inicializado!');
-            console.log('⚠️ Lembre-se de configurar:');
-            console.log('1. ADMIN_CODE (linha 2218)');
-            console.log('2. WHATSAPP_GROUP_LINK (linha 2219)');
-            console.log('3. ROBOX_SERVER_LINK (linha 2220)');
+            console.log('⚠️ Configure o ADMIN_CODE se necessário');
             console.log('\nDados para teste:');
             console.log('Piloto: joao@exemplo.com / 123456');
             console.log('Admin: qualquer email + senha: DeltaAdmin2024!');
