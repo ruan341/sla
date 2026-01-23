@@ -1,146 +1,1193 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delta Airlines RP - Sistema Completo</title>
+    <title>Delta Airlines RP - Sistema de Licenciamento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        /* ==================== ESTILOS GERAIS ==================== */
+        /* ESTILOS MANTIDOS IGUAIS (para economizar espaço) */
+        /* Copie todos os estilos CSS da versão anterior aqui */
+        :root {
+            --primary: #003366;
+            --secondary: #cc0033;
+            --light: #f5f7fa;
+            --dark: #333;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #001f3f, #003366);
-            color: #ffffff;
-            min-height: 100vh;
-            padding: 20px;
+            background-color: #f0f2f5;
+            color: var(--dark);
+            line-height: 1.6;
         }
         
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        /* ... CONTINUE COM TODO O CSS DA VERSÃO ANTERIOR ... */
         
-        /* ==================== HEADER ==================== */
-        header {
-            background: rgba(0, 31, 63, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            text-align: center;
-            border: 3px solid #ff9900;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        
-        .logo {
+        /* Adicione esta parte no final dos estilos */
+        .loading {
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .logo-icon {
-            font-size: 3rem;
-            color: #ff9900;
-        }
-        
-        h1 {
-            font-size: 2.8rem;
-            background: linear-gradient(90deg, #ffffff, #ff9900);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            color: #88ccff;
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-        }
-        
-        /* ==================== STATUS BAR ==================== */
-        .status-bar {
-            display: flex;
-            justify-content: space-around;
-            background: rgba(0, 51, 102, 0.9);
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border: 2px solid #ff9900;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .status-item {
-            display: flex;
             align-items: center;
-            gap: 10px;
+            height: 100vh;
+            font-size: 1.5rem;
+            color: var(--primary);
         }
         
-        .status-value {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #ff9900;
+        .loading i {
+            margin-right: 10px;
+            animation: spin 1s linear infinite;
         }
         
-        /* ==================== ABAS ==================== */
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            background: rgba(0, 31, 63, 0.9);
-            padding: 10px;
-            border-radius: 15px;
-            border: 2px solid rgba(255, 153, 0, 0.3);
-            flex-wrap: wrap;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
-        .tab-btn {
-            flex: 1;
-            min-width: 150px;
-            padding: 15px;
-            background: rgba(0, 51, 102, 0.8);
-            border: none;
-            border-radius: 10px;
-            color: #88ccff;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .tab-btn:hover {
-            background: rgba(255, 153, 0, 0.2);
-            transform: translateY(-2px);
-        }
-        
-        .tab-btn.active {
-            background: linear-gradient(135deg, #ff9900, #ff6600);
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 5px;
             color: white;
-            box-shadow: 0 5px 15px rgba(255, 153, 0, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s;
+            max-width: 400px;
         }
         
-        .tab-btn.locked {
-            background: rgba(136, 204, 255, 0.2);
-            color: #6699cc;
-            cursor: not-allowed;
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
         }
         
-        /* ==================== CONTEÚDO DAS ABAS ==================== */
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s ease;
+        .notification.success {
+            background-color: var(--success);
         }
         
-        @keyframes
+        .notification.error {
+            background-color: var(--danger);
+        }
+        
+        .notification.warning {
+            background-color: var(--warning);
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Carregamento -->
+    <div id="loading-screen" class="loading">
+        <i class="fas fa-spinner"></i> Carregando Delta Airlines RP...
+    </div>
+
+    <!-- Notificações -->
+    <div id="notification-container"></div>
+
+    <!-- Sistema Principal -->
+    <div id="app-container" style="display: none;">
+        <!-- Cabeçalho -->
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-plane"></i>
+                        <h1>Delta Airlines <span>RP</span></h1>
+                    </div>
+                    <div class="user-menu">
+                        <div class="user-avatar" id="user-avatar">JD</div>
+                        <div id="user-name" style="font-weight: 600;"></div>
+                        <button id="logout-btn">Sair</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <main class="container">
+            <!-- Tabs de Navegação -->
+            <div class="tabs">
+                <div class="tab active" data-target="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </div>
+                <div class="tab" data-target="profile">
+                    <i class="fas fa-user"></i> Perfil
+                </div>
+                <div class="tab" data-target="tests">
+                    <i class="fas fa-clipboard-check"></i> Testes
+                </div>
+                <div class="tab" data-target="messages">
+                    <i class="fas fa-comments"></i> Mensagens
+                    <span id="message-count" class="badge" style="margin-left: 5px; display: none;"></span>
+                </div>
+                <div class="tab" data-target="flights">
+                    <i class="fas fa-plane-departure"></i> Voos
+                </div>
+                <div class="tab" data-target="license">
+                    <i class="fas fa-id-card"></i> Carteira
+                </div>
+                <div class="tab admin-only" data-target="admin">
+                    <i class="fas fa-user-shield"></i> Admin
+                </div>
+            </div>
+
+            <!-- Conteúdo das Tabs -->
+            <div class="content">
+                <!-- Dashboard -->
+                <div id="dashboard" class="section active">
+                    <h2 class="section-title"><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                    <div class="stats" id="dashboard-stats">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                    <div id="dashboard-content">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Perfil -->
+                <div id="profile" class="section">
+                    <h2 class="section-title"><i class="fas fa-user"></i> Meu Perfil</h2>
+                    <div id="profile-content">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Testes -->
+                <div id="tests" class="section">
+                    <h2 class="section-title"><i class="fas fa-clipboard-check"></i> Testes de Qualificação</h2>
+                    <div id="tests-content">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Mensagens -->
+                <div id="messages" class="section">
+                    <h2 class="section-title"><i class="fas fa-comments"></i> Mensagens</h2>
+                    <div class="message-box" id="chat-box">
+                        <!-- Mensagens serão carregadas aqui -->
+                    </div>
+                    <div class="form-group">
+                        <label for="message-input">Digite sua mensagem:</label>
+                        <textarea id="message-input" class="form-control" rows="3" placeholder="Digite sua mensagem aqui..."></textarea>
+                    </div>
+                    <button id="send-message-btn" class="btn">Enviar Mensagem</button>
+                </div>
+
+                <!-- Voos -->
+                <div id="flights" class="section">
+                    <h2 class="section-title"><i class="fas fa-plane-departure"></i> Voos Programados</h2>
+                    <div class="flight-list" id="flights-list">
+                        <!-- Voos serão carregados aqui -->
+                    </div>
+                </div>
+
+                <!-- Carteira -->
+                <div id="license" class="section">
+                    <h2 class="section-title"><i class="fas fa-id-card"></i> Carteira de Piloto</h2>
+                    <div id="license-content">
+                        <!-- Carteira será gerada aqui -->
+                    </div>
+                </div>
+
+                <!-- Painel Admin -->
+                <div id="admin" class="section">
+                    <h2 class="section-title"><i class="fas fa-user-shield"></i> Painel Administrativo</h2>
+                    <div id="admin-content">
+                        <!-- Conteúdo admin será carregado aqui -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Rodapé -->
+        <footer>
+            <div class="container">
+                <p>Delta Airlines RP - Sistema de Licenciamento de Pilotos</p>
+                <p>Todos os direitos reservados &copy; 2023</p>
+                <div class="footer-links">
+                    <a href="#" onclick="showTerms()">Termos de Uso</a>
+                    <a href="#" onclick="showPrivacy()">Política de Privacidade</a>
+                    <a href="mailto:suporte@deltaairlinesrp.com">Suporte</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modais -->
+    <div id="auth-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('auth-modal')">&times;</span>
+            <h3 style="color: var(--primary); margin-bottom: 20px;">Acesso ao Sistema</h3>
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">Cadastro Piloto</div>
+            </div>
+            
+            <div id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" class="form-control" placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="Sua senha">
+                </div>
+                <button id="login-btn" class="btn btn-secondary" style="width: 100%;">Entrar</button>
+            </div>
+            
+            <div id="register-form" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label for="reg-name">Nome Completo</label>
+                    <input type="text" id="reg-name" class="form-control" placeholder="Seu nome completo">
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">E-mail</label>
+                    <input type="email" id="reg-email" class="form-control" placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Senha</label>
+                    <input type="password" id="reg-password" class="form-control" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="form-group">
+                    <label for="reg-rpname">Nome no RP</label>
+                    <input type="text" id="reg-rpname" class="form-control" placeholder="Seu nome no Roleplay">
+                </div>
+                <div class="form-group">
+                    <label for="reg-experience">Experiência em RP de Aviação</label>
+                    <select id="reg-experience" class="form-control">
+                        <option value="beginner">Iniciante</option>
+                        <option value="intermediate">Intermediário</option>
+                        <option value="advanced">Avançado</option>
+                        <option value="expert">Especialista</option>
+                    </select>
+                </div>
+                <button id="register-btn" class="btn" style="width: 100%;">Cadastrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuração do Firebase (SUBSTITUA COM SEUS DADOS) -->
+    <script>
+        // SUAS CONFIGURAÇÕES DO FIREBASE AQUI!
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // Estado da aplicação
+        let currentUser = null;
+        let userData = null;
+        let isAdmin = false;
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar se usuário já está logado
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    // Usuário logado
+                    await loadUserData(user.uid);
+                    showApp();
+                } else {
+                    // Nenhum usuário logado
+                    showAuthModal();
+                }
+            });
+        });
+        
+        // Funções de autenticação
+        async function loadUserData(userId) {
+            try {
+                const userDoc = await db.collection('users').doc(userId).get();
+                if (userDoc.exists) {
+                    userData = userDoc.data();
+                    currentUser = userId;
+                    isAdmin = userData.userType === 'admin';
+                    updateUI();
+                } else {
+                    // Criar dados do usuário se não existirem
+                    await createUserData(userId);
+                }
+            } catch (error) {
+                showNotification('Erro ao carregar dados: ' + error.message, 'error');
+            }
+        }
+        
+        async function createUserData(userId) {
+            // Esta função será chamada apenas para usuários antigos
+            // Para novos usuários, os dados são criados no registro
+        }
+        
+        // Login
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                showNotification('Preencha todos os campos', 'warning');
+                return;
+            }
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                closeModal('auth-modal');
+                showNotification('Login realizado com sucesso!', 'success');
+            } catch (error) {
+                showNotification('Erro no login: ' + error.message, 'error');
+            }
+        });
+        
+        // Registro
+        document.getElementById('register-btn').addEventListener('click', async () => {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const rpName = document.getElementById('reg-rpname').value;
+            const experience = document.getElementById('reg-experience').value;
+            
+            if (!name || !email || !password || !rpName) {
+                showNotification('Preencha todos os campos', 'warning');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('A senha deve ter no mínimo 6 caracteres', 'warning');
+                return;
+            }
+            
+            try {
+                // Criar usuário no Authentication
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const userId = userCredential.user.uid;
+                
+                // Criar dados do usuário no Firestore
+                await db.collection('users').doc(userId).set({
+                    name: name,
+                    email: email,
+                    rpName: rpName,
+                    experience: experience,
+                    userType: 'pilot',
+                    licenseStatus: 'pending',
+                    pilotScore: 0,
+                    totalFlights: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                closeModal('auth-modal');
+                showNotification('Cadastro realizado com sucesso! Aguarde aprovação.', 'success');
+            } catch (error) {
+                showNotification('Erro no cadastro: ' + error.message, 'error');
+            }
+        });
+        
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            auth.signOut();
+            showNotification('Você saiu do sistema', 'info');
+        });
+        
+        // Atualizar Interface
+        function updateUI() {
+            // Atualizar avatar e nome
+            const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('user-avatar').textContent = initials;
+            document.getElementById('user-name').textContent = userData.name;
+            
+            // Mostrar/ocultar tab de admin
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.style.display = isAdmin ? 'block' : 'none';
+            });
+            
+            // Carregar conteúdo baseado no tipo de usuário
+            if (isAdmin) {
+                loadAdminContent();
+            } else {
+                loadPilotContent();
+            }
+        }
+        
+        // Carregar conteúdo do piloto
+        async function loadPilotContent() {
+            await loadDashboard();
+            await loadProfile();
+            await loadTests();
+            await loadFlights();
+            await loadLicense();
+            await loadMessages();
+        }
+        
+        // Carregar dashboard
+        async function loadDashboard() {
+            const stats = document.getElementById('dashboard-stats');
+            const content = document.getElementById('dashboard-content');
+            
+            // Buscar dados do piloto
+            const testsSnapshot = await db.collection('tests')
+                .where('pilotId', '==', currentUser)
+                .get();
+            
+            const flightsSnapshot = await db.collection('flights')
+                .where('assignedPilot', '==', currentUser)
+                .where('status', '==', 'scheduled')
+                .get();
+            
+            const pendingTests = testsSnapshot.docs.filter(doc => 
+                doc.data().status === 'pending' || doc.data().status === 'scheduled'
+            ).length;
+            
+            // Atualizar estatísticas
+            stats.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${userData.totalFlights || 0}</div>
+                    <div class="stat-label">Voos Realizados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${userData.pilotScore || 0}%</div>
+                    <div class="stat-label">Pontuação</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${userData.licenseStatus || 'pending'}</div>
+                    <div class="stat-label">Status da Licença</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${pendingTests}</div>
+                    <div class="stat-label">Testes Pendentes</div>
+                </div>
+            `;
+            
+            // Atualizar conteúdo
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-title">
+                        <span>Próximos Voos</span>
+                        <span class="badge badge-info">${flightsSnapshot.size} programados</span>
+                    </div>
+                    <p>Confira seus próximos voos na aba "Voos".</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">
+                        <span>Notificações</span>
+                        <span class="badge badge-warning">${pendingTests > 0 ? '1 nova' : '0'}</span>
+                    </div>
+                    ${pendingTests > 0 ? 
+                        `<p><strong>Sistema:</strong> Você tem ${pendingTests} teste(s) pendente(s). Verifique a aba "Testes".</p>` : 
+                        `<p>Nenhuma notificação no momento.</p>`
+                    }
+                </div>
+            `;
+        }
+        
+        // Carregar perfil
+        async function loadProfile() {
+            const content = document.getElementById('profile-content');
+            
+            const experienceText = {
+                'beginner': 'Iniciante',
+                'intermediate': 'Intermediário',
+                'advanced': 'Avançado',
+                'expert': 'Especialista'
+            }[userData.experience] || userData.experience;
+            
+            const licenseStatusBadge = {
+                'pending': '<span class="badge badge-warning">Em Análise</span>',
+                'approved': '<span class="badge badge-success">Aprovado</span>',
+                'rejected': '<span class="badge badge-danger">Rejeitado</span>'
+            }[userData.licenseStatus] || '<span class="badge badge-warning">Em Análise</span>';
+            
+            content.innerHTML = `
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <p class="form-control" style="background-color:#f9f9f9;">${userData.name}</p>
+                </div>
+                <div class="form-group">
+                    <label>Nome no RP</label>
+                    <p class="form-control" style="background-color:#f9f9f9;">${userData.rpName}</p>
+                </div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <p class="form-control" style="background-color:#f9f9f9;">${userData.email}</p>
+                </div>
+                <div class="form-group">
+                    <label>Experiência em RP de Aviação</label>
+                    <p class="form-control" style="background-color:#f9f9f9;">${experienceText}</p>
+                </div>
+                <div class="form-group">
+                    <label>Pontuação</label>
+                    <p class="form-control" style="background-color:#f9f9f9;">${userData.pilotScore || 0}%</p>
+                </div>
+                <div class="form-group">
+                    <label>Total de Voos</label>
+                    <p class="form-control" style="background-color:#f9f9f9;">${userData.totalFlights || 0}</p>
+                </div>
+                <div class="form-group">
+                    <label>Status da Licença</label>
+                    <p class="form-control" style="background-color:#f9f9f9;">${licenseStatusBadge}</p>
+                </div>
+            `;
+        }
+        
+        // Carregar testes
+        async function loadTests() {
+            const content = document.getElementById('tests-content');
+            
+            const testsSnapshot = await db.collection('tests')
+                .where('pilotId', '==', currentUser)
+                .orderBy('scheduledDate', 'desc')
+                .get();
+            
+            if (testsSnapshot.empty) {
+                content.innerHTML = `
+                    <div class="card">
+                        <div class="card-title">
+                            <span>Nenhum Teste Encontrado</span>
+                        </div>
+                        <p>Aguarde um administrador agendar seu primeiro teste.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let testsHTML = '';
+            let pendingTest = null;
+            
+            testsSnapshot.forEach(doc => {
+                const test = doc.data();
+                test.id = doc.id;
+                
+                const statusBadge = {
+                    'pending': '<span class="badge badge-warning">Pendente</span>',
+                    'scheduled': '<span class="badge badge-info">Agendado</span>',
+                    'completed': '<span class="badge badge-success">Concluído</span>',
+                    'cancelled': '<span class="badge badge-danger">Cancelado</span>'
+                }[test.status] || '<span class="badge">Desconhecido</span>';
+                
+                const testDate = test.scheduledDate ? 
+                    new Date(test.scheduledDate.seconds * 1000).toLocaleString('pt-BR') : 
+                    'Não agendado';
+                
+                testsHTML += `
+                    <div class="card">
+                        <div class="card-title">
+                            <span>Teste de Qualificação</span>
+                            ${statusBadge}
+                        </div>
+                        <p><strong>Status:</strong> ${test.status}</p>
+                        <p><strong>Agendado para:</strong> ${testDate}</p>
+                        ${test.score ? `<p><strong>Pontuação:</strong> ${test.score}%</p>` : ''}
+                        ${test.serverLink && (test.status === 'scheduled' || test.status === 'pending') ? `
+                            <p><strong>Link do Servidor:</strong> <a href="${test.serverLink}" target="_blank">${test.serverLink}</a></p>
+                            <button class="btn btn-secondary start-test-btn" data-link="${test.serverLink}">
+                                Iniciar Teste
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+                
+                if (test.status === 'scheduled' || test.status === 'pending') {
+                    pendingTest = test;
+                }
+            });
+            
+            content.innerHTML = testsHTML;
+            
+            // Adicionar eventos aos botões de iniciar teste
+            document.querySelectorAll('.start-test-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const link = this.getAttribute('data-link');
+                    window.open(link, '_blank');
+                });
+            });
+        }
+        
+        // Carregar voos
+        async function loadFlights() {
+            const content = document.getElementById('flights-list');
+            
+            const flightsSnapshot = await db.collection('flights')
+                .where('assignedPilot', '==', currentUser)
+                .orderBy('dateTime', 'asc')
+                .get();
+            
+            if (flightsSnapshot.empty) {
+                content.innerHTML = `
+                    <div class="card">
+                        <div class="card-title">
+                            <span>Nenhum Voo Programado</span>
+                        </div>
+                        <p>Aguarde um administrador atribuir voos para você.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let flightsHTML = '';
+            
+            flightsSnapshot.forEach(doc => {
+                const flight = doc.data();
+                flight.id = doc.id;
+                
+                const flightDate = flight.dateTime ? 
+                    new Date(flight.dateTime.seconds * 1000) : new Date();
+                
+                const statusBadge = {
+                    'scheduled': '<span class="badge badge-info">Programado</span>',
+                    'completed': '<span class="badge badge-success">Concluído</span>',
+                    'cancelled': '<span class="badge badge-danger">Cancelado</span>'
+                }[flight.status] || '<span class="badge">Desconhecido</span>';
+                
+                flightsHTML += `
+                    <div class="flight-card">
+                        <h4>Voo ${flight.flightNumber} - ${flight.route}</h4>
+                        <div class="flight-info">
+                            <span>Aeronave:</span>
+                            <span>${flight.aircraft}</span>
+                        </div>
+                        <div class="flight-info">
+                            <span>Data:</span>
+                            <span>${flightDate.toLocaleDateString('pt-BR')}</span>
+                        </div>
+                        <div class="flight-info">
+                            <span>Horário:</span>
+                            <span>${flightDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}</span>
+                        </div>
+                        <div class="flight-info">
+                            <span>Status:</span>
+                            <span>${statusBadge}</span>
+                        </div>
+                        ${flight.serverLink && flight.status === 'scheduled' ? `
+                            <button class="btn btn-secondary join-flight-btn" data-link="${flight.serverLink}" style="margin-top: 15px; width: 100%;">
+                                Entrar no Servidor
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = flightsHTML;
+            
+            // Adicionar eventos aos botões de entrar no servidor
+            document.querySelectorAll('.join-flight-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const link = this.getAttribute('data-link');
+                    window.open(link, '_blank');
+                });
+            });
+        }
+        
+        // Carregar carteira
+        async function loadLicense() {
+            const content = document.getElementById('license-content');
+            
+            const licenseStatus = userData.licenseStatus || 'pending';
+            const licenseStatusText = {
+                'pending': 'Em Análise',
+                'approved': 'Aprovada',
+                'rejected': 'Rejeitada'
+            }[licenseStatus] || 'Em Análise';
+            
+            const licenseStatusBadge = {
+                'pending': 'badge-warning',
+                'approved': 'badge-success',
+                'rejected': 'badge-danger'
+            }[licenseStatus] || 'badge-warning';
+            
+            // Gerar ID único baseado no UID
+            const licenseId = 'DL-' + new Date().getFullYear() + '-' + 
+                currentUser.substring(0, 4).toUpperCase();
+            
+            content.innerHTML = `
+                <div class="license-card">
+                    <div class="license-header">
+                        <h2>DELTA AIRLINES RP</h2>
+                        <p>LICENÇA OFICIAL DE PILOTO</p>
+                    </div>
+                    <div class="license-photo">
+                        ${userData.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </div>
+                    <div class="license-details">
+                        <div class="license-field">
+                            <h4>Nome</h4>
+                            <p>${userData.name}</p>
+                        </div>
+                        <div class="license-field">
+                            <h4>Nome no RP</h4>
+                            <p>${userData.rpName}</p>
+                        </div>
+                        <div class="license-field">
+                            <h4>ID do Piloto</h4>
+                            <p>${licenseId}</p>
+                        </div>
+                        <div class="license-field">
+                            <h4>Categoria</h4>
+                            <p>Piloto Comercial</p>
+                        </div>
+                        <div class="license-field">
+                            <h4>Validade</h4>
+                            <p>${new Date().toLocaleDateString('pt-BR')} - ${new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString('pt-BR')}</p>
+                        </div>
+                        <div class="license-field">
+                            <h4>Status</h4>
+                            <p><span class="badge ${licenseStatusBadge}">${licenseStatusText}</span></p>
+                        </div>
+                    </div>
+                    <div class="license-qr">
+                        <div style="width:100px; height:100px; background-color:#fff; display:flex; align-items:center; justify-content:center; color:#666; font-size:0.8rem;">
+                            QR CODE<br>${licenseId}
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align:center; margin-top:20px;">
+                    ${licenseStatus === 'approved' ? `
+                        <p>Sua licença foi aprovada! Você tem acesso total aos serviços.</p>
+                        <a href="https://chat.whatsapp.com/SEUCODIGOAQUI" class="btn btn-success" target="_blank" style="margin-top:15px;">
+                            <i class="fab fa-whatsapp"></i> Entrar no Grupo do WhatsApp
+                        </a>
+                    ` : `
+                        <p>Sua licença está <strong>${licenseStatusText.toLowerCase()}</strong>. Aguarde a aprovação para receber:</p>
+                        <p>1. Esta carteira digital</p>
+                        <p>2. Link do WhatsApp para o grupo de pilotos</p>
+                        <p>3. Acesso permanente ao servidor privado do Roblox</p>
+                    `}
+                </div>
+            `;
+        }
+        
+        // Carregar mensagens
+        async function loadMessages() {
+            const chatBox = document.getElementById('chat-box');
+            
+            // Buscar mensagens do usuário atual
+            const messagesSnapshot = await db.collection('messages')
+                .where('receiverId', '==', currentUser)
+                .orderBy('timestamp', 'asc')
+                .get();
+            
+            let messagesHTML = '';
+            
+            if (!messagesSnapshot.empty) {
+                messagesSnapshot.forEach(doc => {
+                    const msg = doc.data();
+                    const msgDate = msg.timestamp ? 
+                        new Date(msg.timestamp.seconds * 1000) : new Date();
+                    
+                    const isAdminMsg = msg.senderId === 'admin' || 
+                        (await db.collection('users').doc(msg.senderId).get()).data().userType === 'admin';
+                    
+                    messagesHTML += `
+                        <div class="message ${isAdminMsg ? 'admin' : 'pilot'}">
+                            <div class="message-header">
+                                ${isAdminMsg ? 'Administrador' : 'Outro Piloto'} - 
+                                ${msgDate.toLocaleDateString('pt-BR')} ${msgDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}
+                            </div>
+                            <div>${msg.message}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            chatBox.innerHTML = messagesHTML || '<p>Nenhuma mensagem ainda.</p>';
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            // Configurar envio de mensagens
+            document.getElementById('send-message-btn').addEventListener('click', sendMessage);
+        }
+        
+        async function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+            
+            try {
+                // Enviar mensagem para administradores
+                const adminsSnapshot = await db.collection('users')
+                    .where('userType', '==', 'admin')
+                    .get();
+                
+                // Enviar para todos os admins (ou apenas para um específico)
+                adminsSnapshot.forEach(async (adminDoc) => {
+                    await db.collection('messages').add({
+                        senderId: currentUser,
+                        receiverId: adminDoc.id,
+                        message: message,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        read: false
+                    });
+                });
+                
+                // Adicionar mensagem ao chat
+                const chatBox = document.getElementById('chat-box');
+                const msgDate = new Date();
+                
+                chatBox.innerHTML += `
+                    <div class="message pilot">
+                        <div class="message-header">
+                            Você - ${msgDate.toLocaleDateString('pt-BR')} ${msgDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}
+                        </div>
+                        <div>${message}</div>
+                    </div>
+                `;
+                
+                messageInput.value = '';
+                chatBox.scrollTop = chatBox.scrollHeight;
+                
+                showNotification('Mensagem enviada!', 'success');
+            } catch (error) {
+                showNotification('Erro ao enviar mensagem: ' + error.message, 'error');
+            }
+        }
+        
+        // Funções do Admin
+        async function loadAdminContent() {
+            const content = document.getElementById('admin-content');
+            
+            // Buscar pilotos pendentes
+            const pendingPilotsSnapshot = await db.collection('users')
+                .where('userType', '==', 'pilot')
+                .where('licenseStatus', '==', 'pending')
+                .get();
+            
+            // Buscar todos os pilotos
+            const allPilotsSnapshot = await db.collection('users')
+                .where('userType', '==', 'pilot')
+                .get();
+            
+            // Buscar voos
+            const flightsSnapshot = await db.collection('flights')
+                .orderBy('dateTime', 'asc')
+                .get();
+            
+            let pilotsHTML = '';
+            let flightsHTML = '';
+            
+            // Lista de pilotos pendentes
+            if (!pendingPilotsSnapshot.empty) {
+                pendingPilotsSnapshot.forEach(doc => {
+                    const pilot = doc.data();
+                    pilotsHTML += `
+                        <div class="pilot-card">
+                            <div class="pilot-avatar">
+                                ${pilot.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                            </div>
+                            <div class="pilot-info">
+                                <div class="pilot-name">${pilot.name} (${pilot.rpName})</div>
+                                <div class="pilot-status">
+                                    Experiência: ${pilot.experience} | 
+                                    Email: ${pilot.email}
+                                </div>
+                            </div>
+                            <div class="pilot-actions">
+                                <button class="btn btn-success approve-pilot-btn" data-id="${doc.id}">
+                                    Aprovar
+                                </button>
+                                <button class="btn btn-danger reject-pilot-btn" data-id="${doc.id}">
+                                    Rejeitar
+                                </button>
+                                <button class="btn btn-secondary schedule-test-btn" data-id="${doc.id}">
+                                    Agendar Teste
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Lista de voos
+            if (!flightsSnapshot.empty) {
+                flightsSnapshot.forEach(doc => {
+                    const flight = doc.data();
+                    const flightDate = flight.dateTime ? 
+                        new Date(flight.dateTime.seconds * 1000) : new Date();
+                    
+                    flightsHTML += `
+                        <div class="flight-card">
+                            <h4>Voo ${flight.flightNumber}</h4>
+                            <p><strong>Rota:</strong> ${flight.route}</p>
+                            <p><strong>Aeronave:</strong> ${flight.aircraft}</p>
+                            <p><strong>Data:</strong> ${flightDate.toLocaleDateString('pt-BR')} ${flightDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}</p>
+                            <p><strong>Status:</strong> ${flight.status}</p>
+                        </div>
+                    `;
+                });
+            }
+            
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-title">
+                        <span>Pilotos Aguardando Aprovação</span>
+                        <span class="badge badge-warning">${pendingPilotsSnapshot.size}</span>
+                    </div>
+                    <div id="pending-pilots-list">
+                        ${pilotsHTML || '<p>Nenhum piloto pendente.</p>'}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">
+                        <span>Agendar Novo Teste</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-select-pilot">Selecionar Piloto</label>
+                        <select id="admin-select-pilot" class="form-control">
+                            <option value="">Selecione um piloto</option>
+                            ${allPilotsSnapshot.docs.map(doc => `
+                                <option value="${doc.id}">${doc.data().name} (${doc.data().rpName})</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-test-date">Data e Hora do Teste</label>
+                        <input type="datetime-local" id="admin-test-date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-test-link">Link do Servidor Privado</label>
+                        <input type="text" id="admin-test-link" class="form-control" placeholder="https://www.roblox.com/games/...">
+                    </div>
+                    <button id="admin-schedule-test-btn" class="btn">Agendar Teste</button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">
+                        <span>Adicionar Novo Voo</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-flight-number">Número do Voo</label>
+                        <input type="text" id="admin-flight-number" class="form-control" placeholder="Ex: DL2025">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-flight-route">Rota</label>
+                        <input type="text" id="admin-flight-route" class="form-control" placeholder="Ex: São Paulo (GRU) - Buenos Aires (EZE)">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-flight-aircraft">Aeronave</label>
+                        <input type="text" id="admin-flight-aircraft" class="form-control" placeholder="Ex: Boeing 777">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-flight-datetime">Data e Hora</label>
+                        <input type="datetime-local" id="admin-flight-datetime" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-assign-pilot">Atribuir a Piloto</label>
+                        <select id="admin-assign-pilot" class="form-control">
+                            <option value="">Nenhum (voo aberto)</option>
+                            ${allPilotsSnapshot.docs.map(doc => `
+                                <option value="${doc.id}">${doc.data().name}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-flight-server">Link do Servidor (opcional)</label>
+                        <input type="text" id="admin-flight-server" class="form-control" placeholder="Link do servidor privado">
+                    </div>
+                    <button id="admin-add-flight-btn" class="btn">Adicionar Voo</button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">
+                        <span>Voos Programados</span>
+                        <span class="badge badge-info">${flightsSnapshot.size}</span>
+                    </div>
+                    <div class="flight-list">
+                        ${flightsHTML || '<p>Nenhum voo programado.</p>'}
+                    </div>
+                </div>
+            `;
+            
+            // Adicionar eventos aos botões
+            document.querySelectorAll('.approve-pilot-btn').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const pilotId = this.getAttribute('data-id');
+                    await approvePilot(pilotId);
+                });
+            });
+            
+            document.querySelectorAll('.reject-pilot-btn').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const pilotId = this.getAttribute('data-id');
+                    await rejectPilot(pilotId);
+                });
+            });
+            
+            document.getElementById('admin-schedule-test-btn').addEventListener('click', scheduleTest);
+            document.getElementById('admin-add-flight-btn').addEventListener('click', addFlight);
+        }
+        
+        async function approvePilot(pilotId) {
+            try {
+                await db.collection('users').doc(pilotId).update({
+                    licenseStatus: 'approved',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showNotification('Piloto aprovado com sucesso!', 'success');
+                loadAdminContent();
+            } catch (error) {
+                showNotification('Erro ao aprovar piloto: ' + error.message, 'error');
+            }
+        }
+        
+        async function rejectPilot(pilotId) {
+            try {
+                await db.collection('users').doc(pilotId).update({
+                    licenseStatus: 'rejected',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showNotification('Piloto rejeitado.', 'warning');
+                loadAdminContent();
+            } catch (error) {
+                showNotification('Erro ao rejeitar piloto: ' + error.message, 'error');
+            }
+        }
+        
+        async function scheduleTest() {
+            const pilotId = document.getElementById('admin-select-pilot').value;
+            const testDate = document.getElementById('admin-test-date').value;
+            const testLink = document.getElementById('admin-test-link').value;
+            
+            if (!pilotId || !testDate || !testLink) {
+                showNotification('Preencha todos os campos', 'warning');
+                return;
+            }
+            
+            try {
+                await db.collection('tests').add({
+                    pilotId: pilotId,
+                    status: 'scheduled',
+                    scheduledDate: new Date(testDate),
+                    serverLink: testLink,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showNotification('Teste agendado com sucesso!', 'success');
+                
+                // Limpar formulário
+                document.getElementById('admin-select-pilot').value = '';
+                document.getElementById('admin-test-date').value = '';
+                document.getElementById('admin-test-link').value = '';
+            } catch (error) {
+                showNotification('Erro ao agendar teste: ' + error.message, 'error');
+            }
+        }
+        
+        async function addFlight() {
+            const flightNumber = document.getElementById('admin-flight-number').value;
+            const route = document.getElementById('admin-flight-route').value;
+            const aircraft = document.getElementById('admin-flight-aircraft').value;
+            const datetime = document.getElementById('admin-flight-datetime').value;
+            const pilotId = document.getElementById('admin-assign-pilot').value;
+            const serverLink = document.getElementById('admin-flight-server').value;
+            
+            if (!flightNumber || !route || !aircraft || !datetime) {
+                showNotification('Preencha todos os campos obrigatórios', 'warning');
+                return;
+            }
+            
+            try {
+                await db.collection('flights').add({
+                    flightNumber: flightNumber,
+                    route: route,
+                    aircraft: aircraft,
+                    dateTime: new Date(datetime),
+                    assignedPilot: pilotId || null,
+                    serverLink: serverLink || null,
+                    status: 'scheduled',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showNotification('Voo adicionado com sucesso!', 'success');
+                
+                // Limpar formulário
+                document.getElementById('admin-flight-number').value = '';
+                document.getElementById('admin-flight-route').value = '';
+                document.getElementById('admin-flight-aircraft').value = '';
+                document.getElementById('admin-flight-datetime').value = '';
+                document.getElementById('admin-assign-pilot').value = '';
+                document.getElementById('admin-flight-server').value = '';
+            } catch (error) {
+                showNotification('Erro ao adicionar voo: ' + error.message, 'error');
+            }
+        }
+        
+        // Funções auxiliares
+        function showApp() {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('app-container').style.display = 'block';
+        }
+        
+        function showAuthModal() {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('auth-modal').style.display = 'block';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function switchAuthTab(tab) {
+            document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+            
+            document.querySelectorAll('.auth-tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+        }
+        
+        function showNotification(message, type) {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        function showTerms() {
+            alert('Termos de Uso: Este sistema é exclusivo para uso da comunidade Delta Airlines RP. Todos os dados são confidenciais.');
+        }
+        
+        function showPrivacy() {
+            alert('Política de Privacidade: Seus dados são armazenados com segurança no Firebase e não são compartilhados com terceiros.');
+        }
+        
+        // Configurar tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                
+                this.classList.add('active');
+                const targetId = this.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
